@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Generator - VidHai Sales</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style-extended.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <nav>
+                <div class="logo">VidHai Sales</div>
+                <div class="nav-links">
+                    <a href="dashboard.html">Dashboard</a>
+                    <a href="deck-generator.html">Pitch Deck</a>
+                    <a href="document-generator.html" class="active">Documents</a>
+                    <a href="history.html">History</a>
+                    <a href="#" id="logoutBtn">Logout</a>
+                </div>
+            </nav>
+        </header>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h1>Document Generator</h1>
+                <p>Create professional sales documents, proposals, and ROI analyses</p>
+            </div>
+
+            <div class="card">
+                <div class="form-group">
+                    <label class="form-label" for="documentType">Document Type</label>
+                    <select id="documentType" class="form-control">
+                        <option value="">Select document type...</option>
+                        <option value="proposal">Sales Proposal</option>
+                        <option value="roi">ROI Analysis</option>
+                        <option value="technical">Technical Specification</option>
+                        <option value="executive">Executive Summary</option>
+                        <option value="custom">Custom Document</option>
+                    </select>
+                </div>
+
+                <div id="proposalForm" class="document-form hidden">
+                    <h3>Sales Proposal Details</h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="propClientName">Client Name</label>
+                        <input type="text" id="propClientName" class="form-control" placeholder="e.g., Thor Industries">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="propIndustry">Industry</label>
+                        <input type="text" id="propIndustry" class="form-control" placeholder="e.g., RV Manufacturing">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="propSolution">Solution/Product</label>
+                        <input type="text" id="propSolution" class="form-control" placeholder="e.g., CAD Migration to KeyCreator">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="propChallenge">Key Challenge/Pain Point</label>
+                        <textarea id="propChallenge" class="form-control" rows="3" placeholder="Describe the client's main challenge..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="propValue">Value Proposition</label>
+                        <textarea id="propValue" class="form-control" rows="3" placeholder="What unique value do you provide?"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="propInvestment">Investment Amount</label>
+                        <input type="text" id="propInvestment" class="form-control" placeholder="e.g., $250,000">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="propTimeline">Implementation Timeline</label>
+                        <input type="text" id="propTimeline" class="form-control" placeholder="e.g., 6 months">
+                    </div>
+
+                    <button class="btn btn--primary btn--full-width" onclick="generateProposal()">Generate Proposal</button>
+                </div>
+
+                <div id="roiForm" class="document-form hidden">
+                    <h3>ROI Analysis Details</h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="roiClientName">Client Name</label>
+                        <input type="text" id="roiClientName" class="form-control" placeholder="e.g., Cardinal Health">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="roiCurrentCost">Current Annual Cost</label>
+                        <input type="number" id="roiCurrentCost" class="form-control" placeholder="e.g., 500000">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="roiProposedCost">Proposed Solution Cost</label>
+                        <input type="number" id="roiProposedCost" class="form-control" placeholder="e.g., 250000">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="roiEfficiencyGain">Efficiency Gain (%)</label>
+                        <input type="number" id="roiEfficiencyGain" class="form-control" placeholder="e.g., 35">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="roiTimeframe">Analysis Timeframe (years)</label>
+                        <input type="number" id="roiTimeframe" class="form-control" placeholder="e.g., 3" value="3">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="roiAdditionalBenefits">Additional Benefits</label>
+                        <textarea id="roiAdditionalBenefits" class="form-control" rows="3" placeholder="List other quantifiable benefits..."></textarea>
+                    </div>
+
+                    <button class="btn btn--primary btn--full-width" onclick="generateROI()">Generate ROI Analysis</button>
+                </div>
+
+                <div id="technicalForm" class="document-form hidden">
+                    <h3>Technical Specification Details</h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="techProject">Project Name</label>
+                        <input type="text" id="techProject" class="form-control" placeholder="e.g., Automated Sidewall Manufacturing System">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="techScope">Project Scope</label>
+                        <textarea id="techScope" class="form-control" rows="3" placeholder="Describe the scope of the project..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="techRequirements">Technical Requirements</label>
+                        <textarea id="techRequirements" class="form-control" rows="4" placeholder="List key technical requirements (one per line)..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="techDeliverables">Deliverables</label>
+                        <textarea id="techDeliverables" class="form-control" rows="3" placeholder="List project deliverables..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="techTimeline">Project Timeline</label>
+                        <input type="text" id="techTimeline" class="form-control" placeholder="e.g., Q2-Q4 2026">
+                    </div>
+
+                    <button class="btn btn--primary btn--full-width" onclick="generateTechnical()">Generate Technical Spec</button>
+                </div>
+
+                <div id="executiveForm" class="document-form hidden">
+                    <h3>Executive Summary Details</h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="execTitle">Report Title</label>
+                        <input type="text" id="execTitle" class="form-control" placeholder="e.g., Q1 2026 Strategic Account Review">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="execHighlights">Key Highlights</label>
+                        <textarea id="execHighlights" class="form-control" rows="4" placeholder="List main achievements and highlights..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="execMetrics">Key Metrics</label>
+                        <textarea id="execMetrics" class="form-control" rows="3" placeholder="Revenue, pipeline, win rate, etc..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="execRecommendations">Recommendations</label>
+                        <textarea id="execRecommendations" class="form-control" rows="3" placeholder="Strategic recommendations..."></textarea>
+                    </div>
+
+                    <button class="btn btn--primary btn--full-width" onclick="generateExecutive()">Generate Executive Summary</button>
+                </div>
+
+                <div id="customForm" class="document-form hidden">
+                    <h3>Custom Document</h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="customTitle">Document Title</label>
+                        <input type="text" id="customTitle" class="form-control" placeholder="Enter document title...">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="customContent">Content</label>
+                        <textarea id="customContent" class="form-control" rows="10" placeholder="Enter your content here..."></textarea>
+                    </div>
+
+                    <button class="btn btn--primary btn--full-width" onclick="generateCustom()">Generate Custom Document</button>
+                </div>
+            </div>
+
+            <div id="outputSection" class="card hidden" style="margin-top: 2rem;">
+                <div class="flex justify-between items-center" style="margin-bottom: 1rem;">
+                    <h2>Generated Document</h2>
+                    <div class="flex gap-8">
+                        <button class="btn btn--secondary btn--sm" onclick="copyToClipboard()">Copy</button>
+                        <button class="btn btn--secondary btn--sm" onclick="downloadDocument()">Download</button>
+                        <button class="btn btn--primary btn--sm" onclick="saveDocument()">Save</button>
+                    </div>
+                </div>
+                <div id="documentOutput" style="white-space: pre-wrap; font-family: var(--font-family-mono); padding: 1rem; background-color: var(--color-secondary); border-radius: var(--radius-base); max-height: 600px; overflow-y: auto;"></div>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 VidHai Sales. Part of the <a href="https://github.com/rsgowtham-git">VidHai</a> ecosystem.</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="document-logic.js"></script>
+</body>
+</html>
