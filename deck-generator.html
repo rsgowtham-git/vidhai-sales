@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capability Deck Generator - Vidhai Sales</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <h1>Vidhai</h1>
+                <span class="nav-subtitle">Deck Generator</span>
+            </div>
+            <div class="nav-links">
+                <a href="dashboard.html">← Dashboard</a>
+                <button onclick="handleLogout()" class="btn-secondary">Sign Out</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="page-header">
+            <h1>Capability Deck Generator</h1>
+            <p>AI-powered presentation builder using your case study library</p>
+        </div>
+
+        <div class="card" id="formCard">
+            <form id="deckForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="label" for="company">Company Name *</label>
+                        <input type="text" id="company" class="input" placeholder="e.g., Winnebago Industries" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="label" for="contact">Contact Person</label>
+                        <input type="text" id="contact" class="input" placeholder="e.g., Sarah Johnson">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="label" for="title">Contact Title</label>
+                        <input type="text" id="title" class="input" placeholder="e.g., VP of Engineering">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="label" for="industry">Industry *</label>
+                        <select id="industry" class="input" required>
+                            <option value="">Select industry...</option>
+                            <option value="Transportation">Transportation</option>
+                            <option value="Automotive">Automotive</option>
+                            <option value="Industrial">Industrial Products & Machinery</option>
+                            <option value="Process Engineering">Process Engineering</option>
+                            <option value="Energy">Energy</option>
+                            <option value="Hi-Tech">Hi-Tech & Medical Devices</option>
+                            <option value="Furniture">Furniture</option>
+                            <option value="Food & Beverage">Food & Beverage</option>
+                            <option value="Healthcare">Pharma & Healthcare</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="label">Engagement Types (select all that apply)</label>
+                    <div class="checkbox-grid">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="engagement" value="Product Engineering">
+                            <span>Product Engineering</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="engagement" value="Plant Engineering">
+                            <span>Plant Engineering</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="engagement" value="Digital Manufacturing">
+                            <span>Digital Manufacturing</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="engagement" value="Turnkey Automation">
+                            <span>Turnkey Automation</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="engagement" value="Software Solutions">
+                            <span>Software Solutions</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="engagement" value="CAD Migration">
+                            <span>CAD Migration & Automation</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="engagement" value="Vision Inspection">
+                            <span>Vision Inspection Systems</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="engagement" value="IoT">
+                            <span>IoT & Embedded Systems</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="label" for="painPoints">Known Pain Points / Context</label>
+                    <textarea id="painPoints" class="input" rows="4" placeholder="Describe challenges, RFP context, prior conversations..."></textarea>
+                </div>
+
+                <button type="submit" class="btn-primary btn-full" id="generateBtn">
+                    🚀 Research & Generate Deck
+                </button>
+
+                <div id="progressBar" class="progress-container" style="display: none;">
+                    <div class="progress-bar" id="progressBarFill"></div>
+                    <div class="progress-text" id="progressText"></div>
+                </div>
+            </form>
+        </div>
+
+        <div id="resultCard" class="card" style="display: none;">
+            <div class="result-header">
+                <h2>Generated Capability Deck</h2>
+                <div class="result-actions">
+                    <button onclick="downloadDeck()" class="btn-primary">📥 Download</button>
+                    <button onclick="copyDeck()" class="btn-secondary">📋 Copy</button>
+                    <button onclick="resetForm()" class="btn-secondary">✏️ New Deck</button>
+                </div>
+            </div>
+            <div id="deckContent" class="deck-preview"></div>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+    <script src="deck-logic.js"></script>
+</body>
+</html>
