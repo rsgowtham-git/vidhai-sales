@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History - Vidhai Sales</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style-extended.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <h1>Vidhai</h1>
+                <span class="nav-subtitle">History</span>
+            </div>
+            <div class="nav-links">
+                <a href="dashboard.html">← Dashboard</a>
+                <button onclick="handleLogout()" class="btn-secondary">Sign Out</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="page-header">
+            <h1>Generation History</h1>
+            <p>Browse and retrieve all your past decks and pitches</p>
+        </div>
+
+        <div class="history-tabs">
+            <button class="tab-btn tab-active" onclick="switchTab('decks')">Capability Decks</button>
+            <button class="tab-btn" onclick="switchTab('pitches')">Pitch Scripts</button>
+        </div>
+
+        <div id="decksTab" class="tab-content">
+            <div id="decksList">Loading...</div>
+        </div>
+
+        <div id="pitchesTab" class="tab-content" style="display: none;">
+            <div id="pitchesList">Loading...</div>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+    <script>
+        checkAuth();
+        let currentTab = 'decks';
+
+        async function loadHistory() {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
+
+            // Load decks
+            const { data: decks } = await supabase
+                .from('generated_decks')
+                .select('*')
+                .eq('user_id', user.id)
+                .order('created_at', { ascending: false });
+
+            displayDecks(decks || []);
+
+            // Load pitches
+            const { data: pitches } = await supabase
+                .from('generated_pitches')
+                .select('*')
+                .eq('user_id', user.id)
+                .order('created_at', { ascending: false });
+
+            displayPitches(pitches || []);
+        }
+
+        function displayDecks(decks) {
+            const listEl = document.getElementById('decksList');
+            
+            if (decks.length === 0) {
+                listEl.innerHTML = '<p class="empty-state">No decks generated yet. <a href="deck-generator.html">Create your first one</a></p>';
+                return;
+            }
+
+            listEl.innerHTML = decks.map(deck => `
+                <div class="history-item">
+                    <div class="history-header">
+                        <h3>${deck.company_name}</h3>
+                        <span class="history-date">${formatDate(deck.created_at)}</span>
+                    </div>
+                    <div class="history-meta">
+                        <span>📊 ${deck.deck_content.slides?.length || 0} slides</span>
+                        <span>🏭 ${deck.industry}</span>
+                        ${deck.contact_name ? `<span>👤 ${deck.contact_name}</span>` : ''}
+                    </div>
+                    <div class="history-actions">
+                        <button onclick='viewDeck(${JSON.stringify(deck.deck_content)})' class="btn-secondary">📖 View</button>
+                        <button onclick='downloadDeckHistory(${JSON.stringify(deck.deck_content)})' class="btn-secondary">📥 Download</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function displayPitches(pitches) {
+            const listEl = document.getElementById('pitchesList');
+            
+            if (pitches.length === 0) {
+                listEl.innerHTML = '<p class="empty-state">No pitches generated yet. <a href="pitch-generator.html">Create your first one</a></p>';
+                return;
+            }
+
+            listEl.innerHTML = '<p class="empty-state">Pitch generator coming soon!</p>';
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('tab-active'));
+            event.target.classList.add('tab-active');
+            
+            document.getElementById('decksTab').style.display = tab === 'decks' ? 'block' : 'none';
+            document.getElementById('pitchesTab').style.display = tab === 'pitches' ? 'block' : 'none';
+        }
+
+        function viewDeck(deckContent) {
+            alert('Deck preview modal coming soon! For now, use Download.');
+        }
+
+        function downloadDeckHistory(deckContent) {
+            let text = `${deckContent.company} - Capability Deck\n`;
+            text += `Generated: ${deckContent.date}\n\n`;
+            
+            deckContent.slides.forEach((slide, idx) => {
+                text += `SLIDE ${idx + 1}: ${slide.title}\n${'='.repeat(60)}\n`;
+                if (slide.content) text += `${slide.content}\n\n`;
+                if (slide.bullets) {
+                    slide.bullets.forEach(b => text += `• ${b}\n`);
+                    text += '\n';
+                }
+                if (slide.outcome) text += `OUTCOME: ${slide.outcome}\n\n`;
+            });
+            
+            downloadTextFile(text, `${deckContent.company}_Deck.txt`);
+        }
+
+        async function handleLogout() {
+            await supabase.auth.signOut();
+            window.location.href = 'login.html';
+        }
+
+        loadHistory();
+    </script>
+
+    <style>
+        .history-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--color-border);
+        }
+
+        .tab-btn {
+            padding: 1rem 2rem;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--color-text-light);
+            transition: all 0.2s;
+        }
+
+        .tab-active {
+            color: var(--color-primary);
+            border-bottom-color: var(--color-primary);
+        }
+
+        .history-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 1rem;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .history-header h3 {
+            font-size: 1.25rem;
+        }
+
+        .history-date {
+            font-size: 0.875rem;
+            color: var(--color-text-light);
+        }
+
+        .history-meta {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.875rem;
+            color: var(--color-text-light);
+            margin-bottom: 1rem;
+        }
+
+        .history-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--color-text-light);
+        }
+
+        .empty-state a {
+            color: var(--color-primary);
+            text-decoration: underline;
+        }
+    </style>
+</body>
+</html>
