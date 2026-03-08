@@ -3,85 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign In - Vidhai Sales</title>
+    <title>Sign In - Sales Deck Generator</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <div class="login-container">
-        <div class="login-card">
-            <div class="login-header">
-                <h1>Vidhai</h1>
-                <h2>Sales Intelligence</h2>
-                <p>Authorized Access Only</p>
+    <div class="container">
+        <div class="auth-container">
+            <div class="auth-card card">
+                <h1 style="text-align: center; margin-bottom: var(--space-8);">Sales Deck Generator</h1>
+                <p style="text-align: center; color: var(--color-text-secondary); margin-bottom: var(--space-24);">
+                    Sign in to generate custom sales decks
+                </p>
+
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('signin')">Sign In</button>
+                    <button class="tab" onclick="switchTab('signup')">Sign Up</button>
+                </div>
+
+                <!-- Sign In Form -->
+                <form id="signinForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="signinEmail" class="form-label">Email</label>
+                        <input type="email" id="signinEmail" class="form-control" required 
+                               placeholder="your@email.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="signinPassword" class="form-label">Password</label>
+                        <input type="password" id="signinPassword" class="form-control" required 
+                               placeholder="••••••••">
+                    </div>
+
+                    <div id="signinError" class="status status--error hidden"></div>
+
+                    <button type="submit" class="btn btn--primary btn--full-width btn--lg">
+                        Sign In
+                    </button>
+                </form>
+
+                <!-- Sign Up Form -->
+                <form id="signupForm" class="auth-form hidden">
+                    <div class="form-group">
+                        <label for="signupEmail" class="form-label">Email</label>
+                        <input type="email" id="signupEmail" class="form-control" required 
+                               placeholder="your@email.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="signupPassword" class="form-label">Password</label>
+                        <input type="password" id="signupPassword" class="form-control" required 
+                               placeholder="••••••••" minlength="6">
+                        <small style="color: var(--color-text-secondary); font-size: var(--font-size-sm);">
+                            Minimum 6 characters
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="signupPasswordConfirm" class="form-label">Confirm Password</label>
+                        <input type="password" id="signupPasswordConfirm" class="form-control" required 
+                               placeholder="••••••••">
+                    </div>
+
+                    <div id="signupError" class="status status--error hidden"></div>
+                    <div id="signupSuccess" class="status status--success hidden"></div>
+
+                    <button type="submit" class="btn btn--primary btn--full-width btn--lg">
+                        Create Account
+                    </button>
+                </form>
+
+                <div style="text-align: center; margin-top: var(--space-24);">
+                    <a href="index.html" style="color: var(--color-text-secondary); font-size: var(--font-size-sm);">
+                        ← Back to Home
+                    </a>
+                </div>
             </div>
-
-            <form id="loginForm" class="login-form">
-                <div class="form-group">
-                    <label class="label" for="email">Email</label>
-                    <input type="email" id="email" class="input" placeholder="you@company.com" required>
-                </div>
-
-                <div class="form-group">
-                    <label class="label" for="password">Password</label>
-                    <input type="password" id="password" class="input" placeholder="••••••••" required>
-                </div>
-
-                <div id="errorMessage" class="error" style="display: none;"></div>
-
-                <button type="submit" class="btn-primary btn-full" id="loginBtn">
-                    Sign In
-                </button>
-            </form>
-
-            <p class="login-footer">
-                Need access? Contact your administrator<br>
-                <a href="index.html">← Back to Home</a>
-            </p>
         </div>
     </div>
 
     <script src="app.js"></script>
     <script>
-        // Login form handler
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        // Tab switching
+        function switchTab(tab) {
+            const signinForm = document.getElementById('signinForm');
+            const signupForm = document.getElementById('signupForm');
+            const tabs = document.querySelectorAll('.tab');
+
+            if (tab === 'signin') {
+                signinForm.classList.remove('hidden');
+                signupForm.classList.add('hidden');
+                tabs[0].classList.add('active');
+                tabs[1].classList.remove('active');
+            } else {
+                signinForm.classList.add('hidden');
+                signupForm.classList.remove('hidden');
+                tabs[0].classList.remove('active');
+                tabs[1].classList.add('active');
+            }
+        }
+
+        // Sign In
+        document.getElementById('signinForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const btn = document.getElementById('loginBtn');
-            const errorEl = document.getElementById('errorMessage');
-            
-            btn.textContent = 'Signing in...';
-            btn.disabled = true;
-            errorEl.style.display = 'none';
-            
+            const email = document.getElementById('signinEmail').value;
+            const password = document.getElementById('signinPassword').value;
+            const errorDiv = document.getElementById('signinError');
+
             try {
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email,
-                    password
-                });
-                
-                if (error) throw error;
-                
-                // Check whitelist
-                const { data: profile } = await supabase
-                    .from('user_profiles')
-                    .select('allowed_access')
-                    .eq('id', data.user.id)
-                    .single();
-                
-                if (!profile?.allowed_access) {
-                    await supabase.auth.signOut();
-                    throw new Error('Access not authorized. Contact administrator.');
-                }
-                
+                await window.appFunctions.signIn(email, password);
                 window.location.href = 'dashboard.html';
             } catch (error) {
-                errorEl.textContent = error.message;
-                errorEl.style.display = 'block';
-                btn.textContent = 'Sign In';
-                btn.disabled = false;
+                errorDiv.textContent = error.message || 'Invalid email or password';
+                errorDiv.classList.remove('hidden');
+            }
+        });
+
+        // Sign Up
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const passwordConfirm = document.getElementById('signupPasswordConfirm').value;
+            const errorDiv = document.getElementById('signupError');
+            const successDiv = document.getElementById('signupSuccess');
+
+            errorDiv.classList.add('hidden');
+            successDiv.classList.add('hidden');
+
+            if (password !== passwordConfirm) {
+                errorDiv.textContent = 'Passwords do not match';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                await window.appFunctions.signUp(email, password);
+                successDiv.textContent = 'Account created! Redirecting to dashboard...';
+                successDiv.classList.remove('hidden');
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1500);
+            } catch (error) {
+                errorDiv.textContent = error.message || 'Failed to create account';
+                errorDiv.classList.remove('hidden');
+            }
+        });
+
+        // Check if already logged in
+        window.addEventListener('DOMContentLoaded', async () => {
+            const isAuthenticated = await window.appFunctions.checkAuth();
+            if (isAuthenticated) {
+                window.location.href = 'dashboard.html';
             }
         });
     </script>

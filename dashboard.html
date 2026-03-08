@@ -3,109 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Vidhai Sales</title>
+    <title>Dashboard - Sales Deck Generator</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <nav class="nav">
-        <div class="nav-container">
-            <div class="nav-brand">
-                <h1>Vidhai</h1>
-                <span class="nav-subtitle">Sales Intelligence</span>
-            </div>
-            <div class="nav-links">
-                <span id="userEmail" class="user-email"></span>
-                <button onclick="handleLogout()" class="btn-secondary">Sign Out</button>
-            </div>
-        </div>
-    </nav>
+    <div class="container">
+        <header>
+            <nav>
+                <div class="logo">Sales Deck Generator</div>
+                <div class="nav-links">
+                    <a href="dashboard.html" class="active">Dashboard</a>
+                    <a href="history.html">History</a>
+                    <button onclick="handleSignOut()" class="btn btn--secondary btn--sm">Sign Out</button>
+                </div>
+            </nav>
+        </header>
 
-    <main class="container">
-        <div class="dashboard-header">
-            <h1>Sales Intelligence Hub</h1>
-            <p>Generate presentations and pitches powered by AI</p>
-        </div>
-
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-number" id="deckCount">-</div>
-                <div class="stat-label">Decks Generated</div>
+        <main class="main-content">
+            <div class="page-header">
+                <h1>Welcome back!</h1>
+                <p id="userEmail"></p>
             </div>
-            <div class="stat-card">
-                <div class="stat-number" id="pitchCount">-</div>
-                <div class="stat-label">Pitches Created</div>
+
+            <div class="stats-grid">
+                <div class="stat-card card">
+                    <h3>Total Decks</h3>
+                    <p class="stat-value" id="totalDecks">0</p>
+                </div>
+                <div class="stat-card card">
+                    <h3>This Week</h3>
+                    <p class="stat-value" id="recentDecks">0</p>
+                </div>
+                <div class="stat-card card">
+                    <h3>Top Industry</h3>
+                    <p class="stat-value" id="topIndustry">-</p>
+                </div>
             </div>
-            <div class="stat-card">
-                <div class="stat-number" id="totalCount">-</div>
-                <div class="stat-label">Total Outputs</div>
+
+            <div class="actions-section">
+                <div class="card">
+                    <h2>Quick Actions</h2>
+                    <div class="actions-grid">
+                        <a href="deck-generator.html" class="action-card">
+                            <h3>📝 Generate New Deck</h3>
+                            <p>Create a custom sales pitch deck</p>
+                        </a>
+                        <a href="history.html" class="action-card">
+                            <h3>📚 View History</h3>
+                            <p>Access your saved decks</p>
+                        </a>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <div class="tools-grid">
-            <a href="deck-generator.html" class="tool-card">
-                <div class="tool-icon">📊</div>
-                <h3>Capability Deck Generator</h3>
-                <p>Generate customized capability presentations by analyzing your case study library and matching to prospect needs.</p>
-                <div class="tool-cta">Generate Deck →</div>
-            </a>
-
-            <a href="pitch-generator.html" class="tool-card">
-                <div class="tool-icon">📞</div>
-                <h3>Cold Call Pitch Generator</h3>
-                <p>Create stakeholder-specific pitches tailored for C-Level, VP Engineering, Procurement, and Operations contacts.</p>
-                <div class="tool-cta">Generate Pitches →</div>
-            </a>
-
-            <a href="history.html" class="tool-card">
-                <div class="tool-icon">📚</div>
-                <h3>History & Reports</h3>
-                <p>Browse, search, and retrieve previously generated capability decks and pitch scripts. Export or reuse anytime.</p>
-                <div class="tool-cta">View History →</div>
-            </a>
-
-            <div class="tool-card tool-card-disabled">
-                <div class="tool-icon" style="opacity: 0.4;">⚙️</div>
-                <h3>Case Study Library</h3>
-                <p>Manage your case study library, upload new references, and configure AI settings.</p>
-                <div class="tool-cta" style="color: #9ca3af;">Coming Soon</div>
+            <div id="recentActivity" class="card" style="display: none;">
+                <h2>Recent Activity</h2>
+                <div id="recentList"></div>
             </div>
-        </div>
-    </main>
+        </main>
+    </div>
 
     <script src="app.js"></script>
     <script>
-        // Check auth on load
-        checkAuth();
+        // Check authentication
+        window.addEventListener('DOMContentLoaded', async () => {
+            await window.appFunctions.requireAuth();
+            await loadDashboard();
+        });
 
-        async function loadStats() {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (!user) return;
-
-            document.getElementById('userEmail').textContent = user.email;
-
-            // Load deck count
-            const { count: deckCount } = await supabase
-                .from('generated_decks')
-                .select('*', { count: 'exact', head: true })
-                .eq('user_id', user.id);
-
-            // Load pitch count
-            const { count: pitchCount } = await supabase
-                .from('generated_pitches')
-                .select('*', { count: 'exact', head: true })
-                .eq('user_id', user.id);
-
-            document.getElementById('deckCount').textContent = deckCount || 0;
-            document.getElementById('pitchCount').textContent = pitchCount || 0;
-            document.getElementById('totalCount').textContent = (deckCount || 0) + (pitchCount || 0);
+        // Handle sign out
+        async function handleSignOut() {
+            try {
+                await window.appFunctions.signOut();
+            } catch (error) {
+                console.error('Sign out error:', error);
+            }
         }
 
-        loadStats();
+        // Load dashboard data
+        async function loadDashboard() {
+            try {
+                const user = window.appFunctions.getCurrentUser();
+                if (user) {
+                    document.getElementById('userEmail').textContent = user.email;
+                }
 
-        async function handleLogout() {
-            await supabase.auth.signOut();
-            window.location.href = 'login.html';
+                const stats = await window.appFunctions.getDashboardStats();
+                document.getElementById('totalDecks').textContent = stats.totalDecks;
+                document.getElementById('recentDecks').textContent = stats.recentDecks;
+                document.getElementById('topIndustry').textContent = 
+                    stats.topIndustries[0] || 'None yet';
+
+                if (stats.totalDecks > 0) {
+                    const history = await window.appFunctions.getDeckHistory();
+                    const recent = history.slice(0, 3);
+                    
+                    document.getElementById('recentActivity').style.display = 'block';
+                    document.getElementById('recentList').innerHTML = recent.map(deck => {
+                        const date = new Date(deck.created_at).toLocaleDateString();
+                        return `
+                            <div style="padding: var(--space-12); border-bottom: 1px solid var(--color-border);">
+                                <strong>${deck.company_name}</strong>
+                                <span style="color: var(--color-text-secondary); font-size: var(--font-size-sm); margin-left: var(--space-8);">
+                                    ${deck.industry} • ${date}
+                                </span>
+                            </div>
+                        `;
+                    }).join('');
+                }
+
+            } catch (error) {
+                console.error('Dashboard load error:', error);
+            }
         }
     </script>
 </body>

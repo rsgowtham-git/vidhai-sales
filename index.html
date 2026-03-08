@@ -3,63 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vidhai Sales Intelligence</title>
+    <title>Sales Deck Generator - AI-Powered Pitch Decks</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <nav class="nav">
-        <div class="nav-container">
-            <div class="nav-brand">
-                <h1>Vidhai</h1>
-                <span class="nav-subtitle">Sales Intelligence</span>
-            </div>
-            <div class="nav-links">
-                <a href="https://vidhai-site.vercel.app" target="_blank">Vidhai Blog</a>
-                <a href="login.html" class="btn-primary">Sign In</a>
-            </div>
-        </div>
-    </nav>
+    <div class="container">
+        <header>
+            <nav>
+                <div class="logo">Sales Deck Generator</div>
+                <div class="nav-links">
+                    <a href="index.html">Home</a>
+                    <a href="login.html" class="btn btn--primary btn--sm">Sign In</a>
+                </div>
+            </nav>
+        </header>
 
-    <main class="hero">
-        <div class="hero-container">
-            <h1 class="hero-title">AI-Powered Sales Intelligence</h1>
-            <p class="hero-subtitle">Generate customized capability decks and pitch scripts in minutes, not hours.</p>
-            
-            <div class="features">
-                <div class="feature-card">
-                    <div class="feature-icon">📊</div>
-                    <h3>Capability Deck Generator</h3>
-                    <p>AI analyzes your case study library and creates customized presentations tailored to each prospect's industry and needs.</p>
+        <main class="main-content">
+            <section class="hero">
+                <h1>Generate Custom Sales Decks in Seconds</h1>
+                <p class="hero-subtitle">
+                    AI-powered sales deck generator tailored for manufacturing and engineering solutions
+                </p>
+                <div class="hero-actions">
+                    <a href="login.html" class="btn btn--primary btn--lg">Get Started Free</a>
+                    <a href="#features" class="btn btn--secondary btn--lg">Learn More</a>
                 </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">📞</div>
-                    <h3>Multi-Stakeholder Pitches</h3>
-                    <p>Generate role-specific cold call scripts for C-Level, VP Engineering, Procurement, and Operations contacts.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">📚</div>
-                    <h3>Smart Case Study Matching</h3>
-                    <p>Automatically surfaces the most relevant success stories based on industry, engagement type, and pain points.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">⚡</div>
-                    <h3>Instant Exports</h3>
-                    <p>Download as PowerPoint, PDF, or copy ready-to-use text. Full history tracking for all generations.</p>
-                </div>
-            </div>
+            </section>
 
-            <div class="cta">
-                <a href="login.html" class="btn-large">Get Started →</a>
-                <p class="cta-note">Authorized access only • Part of Vidhai ecosystem</p>
-            </div>
-        </div>
-    </main>
+            <section id="features" class="features">
+                <h2>Why Sales Deck Generator?</h2>
+                <div class="features-grid">
+                    <div class="card">
+                        <h3>🎯 Industry-Specific</h3>
+                        <p>Pre-loaded templates for manufacturing, CAD automation, EPDM/PLM, vision inspection, and more</p>
+                    </div>
+                    <div class="card">
+                        <h3>⚡ Lightning Fast</h3>
+                        <p>Generate professional pitch decks in under 10 seconds with AI-powered content matching</p>
+                    </div>
+                    <div class="card">
+                        <h3>📊 Data-Driven</h3>
+                        <p>Built-in ROI calculators, implementation timelines, and benefit quantification</p>
+                    </div>
+                    <div class="card">
+                        <h3>🔒 Secure & Private</h3>
+                        <p>Your data is encrypted and only accessible by you. Full data privacy guaranteed</p>
+                    </div>
+                    <div class="card">
+                        <h3>📈 Track History</h3>
+                        <p>Save and access all your generated decks with full search and filtering</p>
+                    </div>
+                    <div class="card">
+                        <h3>🎨 Customizable</h3>
+                        <p>Tailor every deck to your customer's specific pain points and requirements</p>
+                    </div>
+                </div>
+            </section>
 
-    <footer class="footer">
-        <p>&copy; 2026 Vidhai. Built for sales professionals.</p>
-    </footer>
+            <section class="cta-section">
+                <h2>Ready to Close More Deals?</h2>
+                <p>Join sales professionals using AI to create winning pitch decks</p>
+                <a href="login.html" class="btn btn--primary btn--lg">Start Generating Decks</a>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 Sales Deck Generator. All rights reserved.</p>
+        </footer>
+    </div>
 </body>
 </html>
