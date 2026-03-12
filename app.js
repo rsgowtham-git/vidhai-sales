@@ -1,34 +1,43 @@
 // Supabase Configuration
-// Will be replaced with actual credentials
 const SUPABASE_URL = 'https://wyuzksjbbgwvzxzmhpge.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_RM7S8mojamK2fMIkIQHs1w_abG8cZSu';
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Initialize Supabase client (with guard against CDN load failure)
+let supabase;
+try {
+    const sb = window.supabase;
+    if (sb && sb.createClient) {
+        supabase = sb.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    } else {
+        console.error('Supabase library not loaded');
+    }
+} catch (e) {
+    console.error('Supabase init error:', e);
+}
 
 // Auth functions exposed globally
 window.appFunctions = {
-    // Sign in with email/password
     async signIn(email, password) {
+        if (!supabase) throw new Error('Authentication service unavailable. Please refresh the page.');
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         return data;
     },
 
-    // Sign up with email/password
     async signUp(email, password) {
+        if (!supabase) throw new Error('Authentication service unavailable. Please refresh the page.');
         const { data, error } = await supabase.auth.signUp({ email, password });
         if (error) throw error;
         return data;
     },
 
-    // Sign out
     async signOut() {
-        await supabase.auth.signOut();
+        if (supabase) await supabase.auth.signOut();
         window.location.href = 'login.html';
     },
 
-    // Check if user is authenticated and authorized
     async checkAuth() {
+        if (!supabase) return false;
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return false;
 
@@ -42,10 +51,12 @@ window.appFunctions = {
     }
 };
 
-// Auth guard — redirect to login if not on login/index page
+// Auth guard — redirect to login if not on a public page
 async function guardAuth() {
+    if (!supabase) return; // Skip guard if Supabase failed to load
+
     const path = window.location.pathname;
-    const isPublicPage = path.includes('login') || path.includes('index') || path === '/';
+    const isPublicPage = path.endsWith('/') || path.endsWith('index.html') || path.includes('login');
 
     const { data: { user } } = await supabase.auth.getUser();
 
