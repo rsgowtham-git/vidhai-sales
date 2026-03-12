@@ -99,13 +99,13 @@
                         <span class="history-date">${formatDate(deck.created_at)}</span>
                     </div>
                     <div class="history-meta">
-                        <span>📊 ${deck.deck_content.slides?.length || 0} slides</span>
-                        <span>🏭 ${deck.industry}</span>
-                        ${deck.contact_name ? `<span>👤 ${deck.contact_name}</span>` : ''}
+                        <span>${deck.deck_content.slides?.length || 0} slides</span>
+                        <span>${deck.industry}</span>
+                        ${deck.contact_name ? `<span>${deck.contact_name}</span>` : ''}
                     </div>
                     <div class="history-actions">
-                        <button onclick='viewDeck(${JSON.stringify(deck.deck_content)})' class="btn-secondary">📖 View</button>
-                        <button onclick='downloadDeckHistory(${JSON.stringify(deck.deck_content)})' class="btn-secondary">📥 Download</button>
+                        <button onclick='viewDeck(${JSON.stringify(deck.deck_content)})' class="btn-secondary">View</button>
+                        <button onclick='downloadDeckHistory(${JSON.stringify(deck.deck_content)})' class="btn-secondary">Download</button>
                     </div>
                 </div>
             `).join('');
@@ -140,12 +140,12 @@
                             <span class="history-date">${formatDate(item.created_at)}</span>
                         </div>
                         <div class="history-meta">
-                            <span>🎯 ${contactCount} contacts</span>
-                            <span>💰 ${criteria.revenueRange || 'N/A'}</span>
-                            ${criteria.locations && criteria.locations.length > 0 ? `<span>📍 ${criteria.locations.join(', ')}</span>` : ''}
+                            <span>${contactCount} contacts</span>
+                            <span>${criteria.revenueRange || 'N/A'}</span>
+                            ${criteria.locations && criteria.locations.length > 0 ? `<span>${criteria.locations.join(', ')}</span>` : ''}
                         </div>
                         <div class="history-actions">
-                            <button onclick='viewOutreach(${JSON.stringify(item.contacts).replace(/'/g, "&#39;")})' class="btn-secondary">📖 View</button>
+                            <button onclick='viewOutreach(${JSON.stringify(item.contacts).replace(/'/g, "&#39;")})' class="btn-secondary">View</button>
                         </div>
                     </div>
                 `;
