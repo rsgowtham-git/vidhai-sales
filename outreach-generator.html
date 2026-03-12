@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Outreach Generator - Vidhai Sales</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style-extended.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/docx@8.5.0/build/index.umd.min.js"></script>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <h1>Vidhai</h1>
+                <span class="nav-subtitle">Outreach Generator</span>
+            </div>
+            <div class="nav-links">
+                <a href="dashboard.html">← Dashboard</a>
+                <button onclick="handleLogout()" class="btn-secondary">Sign Out</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="page-header">
+            <h1>Outreach Generator</h1>
+            <p>Generate personalized prospect playbooks with AI-powered outreach content</p>
+        </div>
+
+        <div class="card" id="formCard">
+            <form id="outreachForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="label" for="industryPersona">Industry / Company Persona *</label>
+                        <input type="text" id="industryPersona" class="input" placeholder="e.g., Transportation Equipment Manufacturing" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="label" for="revenueRange">Revenue Range *</label>
+                        <select id="revenueRange" class="input" required>
+                            <option value="">Select revenue range...</option>
+                            <option value="$300M-$500M">$300M - $500M</option>
+                            <option value="$500M-$1B">$500M - $1B</option>
+                            <option value="$1B+">$1B+</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="label" for="employeeCount">Employee Count Range</label>
+                        <select id="employeeCount" class="input">
+                            <option value="Any">Any</option>
+                            <option value="1000-5000">1,000 - 5,000</option>
+                            <option value="5000-10000">5,000 - 10,000</option>
+                            <option value="10000+">10,000+</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="label" for="contactCount">Number of Contacts *</label>
+                        <select id="contactCount" class="input" required>
+                            <option value="5">5 contacts</option>
+                            <option value="10">10 contacts</option>
+                            <option value="25">25 contacts</option>
+                            <option value="50">50 contacts</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="label">HQ Location</label>
+                    <div class="location-quick-actions">
+                        <button type="button" class="btn-secondary btn-sm" onclick="selectAllUS()">All US</button>
+                        <button type="button" class="btn-secondary btn-sm" onclick="selectAllCanada()">All Canada</button>
+                        <button type="button" class="btn-secondary btn-sm" onclick="clearLocations()">Clear All</button>
+                    </div>
+                    <div class="checkbox-grid checkbox-grid-locations">
+                        <label class="checkbox-label"><input type="checkbox" name="location" value="CA"> <span>California</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="location" value="TX"> <span>Texas</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="location" value="IL"> <span>Illinois</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="location" value="OH"> <span>Ohio</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="location" value="MI"> <span>Michigan</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="location" value="IN"> <span>Indiana</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="location" value="PA"> <span>Pennsylvania</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="location" value="NY"> <span>New York</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="location" value="WI"> <span>Wisconsin</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="location" value="TN"> <span>Tennessee</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="location" value="NC"> <span>North Carolina</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="location" value="GA"> <span>Georgia</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="location" value="MN"> <span>Minnesota</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="location" value="MO"> <span>Missouri</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="location" value="SC"> <span>South Carolina</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="location" value="AL"> <span>Alabama</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="location" value="KY"> <span>Kentucky</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="location" value="CT"> <span>Connecticut</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="location" value="NJ"> <span>New Jersey</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="location" value="MA"> <span>Massachusetts</span></label>
+                        <label class="checkbox-label location-divider"><input type="checkbox" name="location" value="ON"> <span>Ontario</span></label>
+                        <label class="checkbox-label location-divider"><input type="checkbox" name="location" value="QC"> <span>Quebec</span></label>
+                        <label class="checkbox-label location-divider"><input type="checkbox" name="location" value="BC"> <span>British Columbia</span></label>
+                        <label class="checkbox-label location-divider"><input type="checkbox" name="location" value="AB"> <span>Alberta</span></label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="label">Job Titles (select all that apply) *</label>
+                    <div class="checkbox-grid">
+                        <label class="checkbox-label"><input type="checkbox" name="jobTitle" value="VP Engineering"> <span>VP Engineering</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="jobTitle" value="Director Product Development"> <span>Director Product Development</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="jobTitle" value="VP Manufacturing"> <span>VP Manufacturing</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="jobTitle" value="Director Engineering"> <span>Director Engineering</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="jobTitle" value="CTO"> <span>CTO</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="jobTitle" value="VP Operations"> <span>VP Operations</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="jobTitle" value="Director Manufacturing"> <span>Director Manufacturing</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="jobTitle" value="SVP Engineering"> <span>SVP Engineering</span></label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="label" for="customTitle">Custom Job Title (optional)</label>
+                    <input type="text" id="customTitle" class="input" placeholder="e.g., Head of Automation">
+                </div>
+
+                <button type="submit" class="btn-primary btn-full" id="generateBtn">
+                    🎯 Generate Playbook
+                </button>
+
+                <div id="progressBar" class="progress-container" style="display: none;">
+                    <div class="progress-bar" id="progressBarFill"></div>
+                    <div class="progress-text" id="progressText"></div>
+                </div>
+            </form>
+        </div>
+
+        <div id="resultCard" class="card" style="display: none;">
+            <div class="result-header">
+                <h2>Prospect Playbook</h2>
+                <div class="result-actions">
+                    <button onclick="downloadDOCX()" class="btn-primary">📥 Download DOCX</button>
+                    <button onclick="downloadCSV()" class="btn-secondary">📊 Download CSV</button>
+                    <button onclick="resetForm()" class="btn-secondary">✏️ New Search</button>
+                </div>
+            </div>
+            <div id="mockBanner" class="status status--info" style="display: none;">
+                ⚠️ Mock Mode — Showing sample data. Configure API keys for real prospect discovery.
+            </div>
+            <div id="resultSummary" class="result-summary"></div>
+            <div id="contactCards" class="contact-cards"></div>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+    <script src="outreach-logic.js"></script>
+
+    <style>
+        .location-quick-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            margin-top: 0.25rem;
+        }
+
+        .btn-sm {
+            padding: 0.35rem 0.75rem;
+            font-size: 0.75rem;
+        }
+
+        .checkbox-grid-locations {
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        }
+
+        .location-divider {
+            border-color: var(--color-primary);
+        }
+
+        .result-summary {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .summary-stat {
+            background: var(--color-bg-alt);
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .summary-stat strong {
+            color: var(--color-primary);
+            font-size: 1.25rem;
+            display: block;
+        }
+
+        .contact-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .contact-card {
+            border: 1px solid var(--color-border);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            background: var(--color-surface);
+        }
+
+        .contact-card-header {
+            padding: 1.25rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .contact-card-header:hover {
+            background: var(--color-secondary);
+        }
+
+        .contact-info h3 {
+            font-size: 1.125rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .contact-info .contact-meta {
+            font-size: 0.8125rem;
+            color: var(--color-text-secondary);
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .expand-icon {
+            font-size: 1.25rem;
+            transition: transform 0.2s;
+            color: var(--color-text-secondary);
+        }
+
+        .contact-card.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        .contact-card-body {
+            display: none;
+            padding: 0 1.25rem 1.25rem;
+            border-top: 1px solid var(--color-border);
+        }
+
+        .contact-card.expanded .contact-card-body {
+            display: block;
+        }
+
+        .outreach-section {
+            margin-top: 1.25rem;
+        }
+
+        .outreach-section h4 {
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--color-primary);
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.25rem;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .outreach-section .content {
+            font-size: 0.875rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            color: var(--color-text);
+        }
+
+        .outreach-section .char-count {
+            font-size: 0.75rem;
+            color: var(--color-text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .contact-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            margin-top: 0.75rem;
+        }
+
+        .contact-details-grid .detail-item {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .contact-details-grid .detail-label {
+            color: var(--color-text-secondary);
+            min-width: 60px;
+        }
+
+        .contact-details-grid .detail-value {
+            color: var(--color-text);
+            word-break: break-all;
+        }
+
+        .contact-details-grid .detail-value a {
+            color: var(--color-primary);
+        }
+    </style>
+</body>
+</html>

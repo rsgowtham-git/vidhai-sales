@@ -31,6 +31,7 @@
         <div class="history-tabs">
             <button class="tab-btn tab-active" onclick="switchTab('decks')">Capability Decks</button>
             <button class="tab-btn" onclick="switchTab('pitches')">Pitch Scripts</button>
+            <button class="tab-btn" onclick="switchTab('outreach')">Outreach</button>
         </div>
 
         <div id="decksTab" class="tab-content">
@@ -39,6 +40,10 @@
 
         <div id="pitchesTab" class="tab-content" style="display: none;">
             <div id="pitchesList">Loading...</div>
+        </div>
+
+        <div id="outreachTab" class="tab-content" style="display: none;">
+            <div id="outreachList">Loading...</div>
         </div>
     </main>
 
@@ -68,6 +73,15 @@
                 .order('created_at', { ascending: false });
 
             displayPitches(pitches || []);
+
+            // Load outreach
+            const { data: outreach } = await supabase
+                .from('generated_outreach')
+                .select('*')
+                .eq('user_id', user.id)
+                .order('created_at', { ascending: false });
+
+            displayOutreach(outreach || []);
         }
 
         function displayDecks(decks) {
@@ -108,13 +122,58 @@
             listEl.innerHTML = '<p class="empty-state">Pitch generator coming soon!</p>';
         }
 
+        function displayOutreach(outreachItems) {
+            const listEl = document.getElementById('outreachList');
+
+            if (outreachItems.length === 0) {
+                listEl.innerHTML = '<p class="empty-state">No outreach playbooks generated yet. <a href="outreach-generator.html">Create your first one</a></p>';
+                return;
+            }
+
+            listEl.innerHTML = outreachItems.map(item => {
+                const criteria = item.icp_criteria || {};
+                const contactCount = item.contact_count || (item.contacts ? item.contacts.length : 0);
+                return `
+                    <div class="history-item">
+                        <div class="history-header">
+                            <h3>${criteria.industryPersona || 'Outreach Playbook'}</h3>
+                            <span class="history-date">${formatDate(item.created_at)}</span>
+                        </div>
+                        <div class="history-meta">
+                            <span>🎯 ${contactCount} contacts</span>
+                            <span>💰 ${criteria.revenueRange || 'N/A'}</span>
+                            ${criteria.locations && criteria.locations.length > 0 ? `<span>📍 ${criteria.locations.join(', ')}</span>` : ''}
+                        </div>
+                        <div class="history-actions">
+                            <button onclick='viewOutreach(${JSON.stringify(item.contacts).replace(/'/g, "&#39;")})' class="btn-secondary">📖 View</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function viewOutreach(contacts) {
+            if (!contacts || contacts.length === 0) {
+                alert('No contact data available.');
+                return;
+            }
+            let text = 'OUTREACH PLAYBOOK\n' + '='.repeat(60) + '\n\n';
+            contacts.forEach((c, idx) => {
+                text += `CONTACT ${idx + 1}: ${c.firstName} ${c.lastName}\n`;
+                text += `Title: ${c.title}\nCompany: ${c.companyName}\nEmail: ${c.email}\nPhone: ${c.phone}\n`;
+                text += `LinkedIn: ${c.linkedinUrl || 'N/A'}\n\n`;
+            });
+            downloadTextFile(text, 'Outreach_Playbook.txt');
+        }
+
         function switchTab(tab) {
             currentTab = tab;
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('tab-active'));
             event.target.classList.add('tab-active');
-            
+
             document.getElementById('decksTab').style.display = tab === 'decks' ? 'block' : 'none';
             document.getElementById('pitchesTab').style.display = tab === 'pitches' ? 'block' : 'none';
+            document.getElementById('outreachTab').style.display = tab === 'outreach' ? 'block' : 'none';
         }
 
         function viewDeck(deckContent) {
