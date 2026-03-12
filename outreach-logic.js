@@ -128,7 +128,7 @@ async function generateOutreach() {
         alert('Error generating outreach playbook: ' + error.message);
     } finally {
         btn.disabled = false;
-        btn.textContent = '🎯 Generate Playbook';
+        btn.textContent = 'Generate Playbook';
         setTimeout(() => {
             progressBar.style.display = 'none';
         }, 1000);
