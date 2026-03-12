@@ -27,7 +27,7 @@ AI-powered sales tool for customized pitch generation, presentations, and profes
 
 ### 🎨 Design System
 
-Built with the **Perplexity Design System**:
+Built with:
 - Modern, professional UI
 - Light/dark mode support
 - Responsive design for all devices
@@ -109,7 +109,7 @@ vidhai-sales/
 ├── app.js                  # Core application logic
 ├── deck-logic.js           # Pitch deck generation
 ├── document-logic.js       # Document generation (NEW)
-├── style.css               # Perplexity design system
+├── style.css               # custom design system
 ├── style-extended.css      # Extended styles
 └── supabase-setup.sql      # Database schema
 ```
@@ -117,7 +117,7 @@ vidhai-sales/
 ## Technology Stack
 
 - **Frontend**: Pure HTML, CSS, JavaScript (no frameworks)
-- **Design System**: Perplexity design tokens and components
+- **Design System**: custom design tokens and components
 - **Storage**: localStorage (development) / Supabase (production)
 - **Authentication**: Email/password with session management
 
