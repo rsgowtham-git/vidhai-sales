@@ -2,12 +2,13 @@
 const SUPABASE_URL = 'https://wyuzksjbbgwvzxzmhpge.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_RM7S8mojamK2fMIkIQHs1w_abG8cZSu';
 
-// Initialize Supabase client (with guard against CDN load failure)
-let supabase;
+// Initialize Supabase client
+// Note: The CDN creates a global `var supabase` — we must NOT redeclare it with let/const.
+// Instead we use `supabaseClient` internally and also reassign the global `supabase` to the client.
 try {
-    const sb = window.supabase;
-    if (sb && sb.createClient) {
-        supabase = sb.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const _sb = window.supabase;
+    if (_sb && _sb.createClient) {
+        supabase = _sb.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     } else {
         console.error('Supabase library not loaded');
     }
