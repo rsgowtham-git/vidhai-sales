@@ -49,6 +49,21 @@
             <p>Generate personalized prospect playbooks with AI-powered outreach content</p>
         </div>
 
+        <!-- Mode Selector -->
+        <div class="mode-selector card">
+            <div class="mode-tabs">
+                <button class="mode-tab active" id="modeTabDiscover" onclick="switchMode('discover')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    Discover Prospects
+                </button>
+                <button class="mode-tab" id="modeTabUpload" onclick="switchMode('upload')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    Upload Contact List
+                </button>
+            </div>
+        </div>
+
+        <!-- Discover Mode Form -->
         <div class="card" id="formCard">
             <form id="outreachForm">
                 <div class="form-grid">
@@ -151,6 +166,64 @@
                     <div class="progress-text" id="progressText"></div>
                 </div>
             </form>
+        </div>
+
+        <!-- Upload Mode -->
+        <div class="card" id="uploadCard" style="display: none;">
+            <div class="upload-section">
+                <h2 class="upload-title">Upload Your Contact List</h2>
+                <p class="upload-desc">Upload a CSV or Excel file with your prospect contacts. The AI will generate personalized research, outreach messages, and call scripts for each contact.</p>
+
+                <div class="upload-template">
+                    <div class="upload-template-info">
+                        <h4>Required CSV columns:</h4>
+                        <code>First Name, Last Name, Title, Company, Industry, Revenue, Location, Email, Phone</code>
+                        <p class="upload-template-note">Column headers are flexible -- the system will match common variations (e.g., "Company Name" or "Organization" both work for Company).</p>
+                    </div>
+                    <button type="button" class="btn-secondary btn-sm" onclick="downloadTemplate()">Download Template</button>
+                </div>
+
+                <div class="upload-dropzone" id="uploadDropzone" onclick="document.getElementById('csvFileInput').click()">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.4;">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="17 8 12 3 7 8"/>
+                        <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                    <p class="dropzone-text">Drag and drop your CSV/XLS file here, or click to browse</p>
+                    <p class="dropzone-hint">Supports .csv, .xlsx, .xls</p>
+                    <input type="file" id="csvFileInput" accept=".csv,.xlsx,.xls" style="display:none;" onchange="handleFileUpload(this)">
+                </div>
+
+                <!-- File preview -->
+                <div id="uploadPreview" class="upload-preview" style="display: none;">
+                    <div class="upload-preview-header">
+                        <div>
+                            <h4 id="uploadFileName"></h4>
+                            <span class="upload-preview-count" id="uploadContactCount"></span>
+                        </div>
+                        <button type="button" class="btn-secondary btn-sm" onclick="clearUpload()">Remove</button>
+                    </div>
+                    <div class="upload-preview-table-wrap">
+                        <table class="admin-table" id="uploadPreviewTable">
+                            <thead id="uploadPreviewHead"></thead>
+                            <tbody id="uploadPreviewBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="upload-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="findLinkedIn" checked>
+                            <span>Find real LinkedIn profiles via Google (free, up to 100/day)</span>
+                        </label>
+                    </div>
+                    <button type="button" class="btn-primary btn-full btn-lg" id="uploadGenerateBtn" onclick="generateFromUpload()">
+                        Generate Playbook for Uploaded Contacts
+                    </button>
+                    <div id="uploadProgressBar" class="progress-container" style="display: none;">
+                        <div class="progress-bar" id="uploadProgressBarFill"></div>
+                        <div class="progress-text" id="uploadProgressText"></div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div id="resultCard" class="card" style="display: none;">
