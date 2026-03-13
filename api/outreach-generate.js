@@ -76,7 +76,7 @@ async function callGemini(prompt, apiKey) {
             body: JSON.stringify({
                 contents: [{ parts: [{ text: prompt }] }],
                 systemInstruction: { parts: [{ text: TECHNOSOFT_CONTEXT }] },
-                generationConfig: { temperature: 0.7, maxOutputTokens: 2048 }
+                generationConfig: { temperature: 0.7, maxOutputTokens: 8192 }
             })
         }
     );
