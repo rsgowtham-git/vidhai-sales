@@ -1,82 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script>document.documentElement.setAttribute('data-theme',window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light')</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Sales Deck Generator</title>
+    <title>Dashboard - Vidhai Sales Intelligence</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <nav>
-                <div class="logo">Sales Deck Generator</div>
-                <div class="nav-links">
-                    <a href="dashboard.html" class="active">Dashboard</a>
-                    <a href="history.html">History</a>
-                    <button onclick="handleSignOut()" class="btn btn--secondary btn--sm">Sign Out</button>
-                </div>
-            </nav>
-        </header>
-
-        <main class="main-content">
-            <div class="page-header">
-                <h1>Welcome back!</h1>
-                <p id="userEmail"></p>
+    <nav class="nav">
+        <div class="nav__inner">
+            <a href="dashboard.html" class="nav__logo">
+                <svg width="28" height="28" viewBox="0 0 40 40" fill="none" aria-label="Vidhai">
+                    <rect width="40" height="40" rx="8" fill="var(--color-primary)"/>
+                    <path d="M12 14L20 28L28 14" stroke="var(--color-text-inverse)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Vidhai
+                <span class="nav__logo-badge">Sales</span>
+            </a>
+            <ul class="nav__links">
+                <li><a href="dashboard.html" class="active">Dashboard</a></li>
+                <li><a href="outreach-generator.html">Outreach</a></li>
+                <li><a href="history.html">History</a></li>
+                <li><a href="admin.html" id="navAdminLink" style="display:none;">Admin</a></li>
+            </ul>
+            <div class="nav__actions">
+                <span class="nav__user" id="navUserEmail"></span>
+                <button onclick="handleSignOut()" class="btn-secondary btn-sm">Sign Out</button>
+                <button class="nav__mobile-toggle" onclick="toggleMobileNav()" aria-label="Menu">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
             </div>
+        </div>
+        <div class="nav__mobile-menu" id="mobileMenu">
+            <a href="dashboard.html" class="active">Dashboard</a>
+            <a href="outreach-generator.html">Outreach</a>
+            <a href="history.html">History</a>
+            <a href="admin.html" id="navAdminLinkMobile" style="display:none;">Admin</a>
+            <button onclick="handleSignOut()" class="btn-secondary btn-sm" style="align-self:flex-start;">Sign Out</button>
+        </div>
+    </nav>
 
-            <div class="stats-grid">
-                <div class="stat-card card">
-                    <h3>Total Decks</h3>
-                    <p class="stat-value" id="totalDecks">0</p>
-                </div>
-                <div class="stat-card card">
-                    <h3>This Week</h3>
-                    <p class="stat-value" id="recentDecks">0</p>
-                </div>
-                <div class="stat-card card">
-                    <h3>Top Industry</h3>
-                    <p class="stat-value" id="topIndustry">-</p>
-                </div>
+    <main class="container page-content">
+        <div class="page-header">
+            <h1>Welcome back</h1>
+            <p id="userEmail"></p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card card">
+                <h3>Total Playbooks</h3>
+                <p class="stat-value" id="totalDecks">0</p>
             </div>
+            <div class="stat-card card">
+                <h3>This Week</h3>
+                <p class="stat-value" id="recentDecks">0</p>
+            </div>
+            <div class="stat-card card">
+                <h3>Top Industry</h3>
+                <p class="stat-value" id="topIndustry" style="font-size: var(--text-sm);">-</p>
+            </div>
+        </div>
 
-            <div class="actions-section">
-                <div class="card">
-                    <h2>Quick Actions</h2>
-                    <div class="actions-grid">
-                        <a href="deck-generator.html" class="action-card">
-                            <h3>Generate New Deck</h3>
-                            <p>Create a custom sales pitch deck</p>
-                        </a>
-                        <a href="outreach-generator.html" class="action-card">
-                            <h3>Outreach Generator</h3>
-                            <p>Generate personalized prospect playbooks</p>
-                        </a>
-                        <a href="history.html" class="action-card">
-                            <h3>View History</h3>
-                            <p>Access your saved decks</p>
-                        </a>
+        <div class="card" style="margin-bottom: var(--space-8);">
+            <h2 style="font-family: var(--font-display); font-size: var(--text-lg); font-weight: 700; margin-bottom: var(--space-4);">Quick Actions</h2>
+            <div class="actions-grid">
+                <a href="outreach-generator.html" class="action-card">
+                    <div class="action-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                     </div>
-                </div>
+                    <h3>Outreach Generator</h3>
+                    <p>Generate personalized prospect playbooks with AI</p>
+                </a>
+                <a href="history.html" class="action-card">
+                    <div class="action-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    </div>
+                    <h3>View History</h3>
+                    <p>Access your saved playbooks and outreach content</p>
+                </a>
+                <a href="admin.html" class="action-card" id="dashAdminCard" style="display:none;">
+                    <div class="action-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </div>
+                    <h3>Admin Panel</h3>
+                    <p>Manage users, access controls, and settings</p>
+                </a>
             </div>
+        </div>
 
-            <div id="recentActivity" class="card" style="display: none;">
-                <h2>Recent Activity</h2>
-                <div id="recentList"></div>
-            </div>
-        </main>
-    </div>
+        <div id="recentActivity" class="card" style="display: none;">
+            <h2 style="font-family: var(--font-display); font-size: var(--text-lg); font-weight: 700; margin-bottom: var(--space-4);">Recent Activity</h2>
+            <div id="recentList"></div>
+        </div>
+    </main>
 
     <script src="app.js"></script>
     <script>
-        // Check authentication
-        window.addEventListener('DOMContentLoaded', async () => {
-            await window.appFunctions.requireAuth();
-            await loadDashboard();
-        });
+        function toggleMobileNav() {
+            document.getElementById('mobileMenu').classList.toggle('open');
+        }
 
-        // Handle sign out
         async function handleSignOut() {
             try {
                 await window.appFunctions.signOut();
@@ -85,33 +110,46 @@
             }
         }
 
-        // Load dashboard data
         async function loadDashboard() {
             try {
-                const user = window.appFunctions.getCurrentUser();
+                const user = await window.appFunctions.getCurrentUser();
                 if (user) {
                     document.getElementById('userEmail').textContent = user.email;
+                    document.getElementById('navUserEmail').textContent = user.email;
+                }
+
+                // Check admin
+                const isAdmin = await window.appFunctions.isAdmin();
+                if (isAdmin) {
+                    document.getElementById('navAdminLink').style.display = '';
+                    document.getElementById('navAdminLinkMobile').style.display = '';
+                    document.getElementById('dashAdminCard').style.display = '';
                 }
 
                 const stats = await window.appFunctions.getDashboardStats();
                 document.getElementById('totalDecks').textContent = stats.totalDecks;
                 document.getElementById('recentDecks').textContent = stats.recentDecks;
-                document.getElementById('topIndustry').textContent = 
+                document.getElementById('topIndustry').textContent =
                     stats.topIndustries[0] || 'None yet';
 
                 if (stats.totalDecks > 0) {
                     const history = await window.appFunctions.getDeckHistory();
-                    const recent = history.slice(0, 3);
-                    
+                    const recent = history.slice(0, 5);
+
                     document.getElementById('recentActivity').style.display = 'block';
-                    document.getElementById('recentList').innerHTML = recent.map(deck => {
-                        const date = new Date(deck.created_at).toLocaleDateString();
+                    document.getElementById('recentList').innerHTML = recent.map(item => {
+                        const criteria = item.icp_criteria || {};
+                        const date = formatDate(item.created_at);
+                        const contactCount = item.contact_count || (item.contacts ? item.contacts.length : 0);
                         return `
-                            <div style="padding: var(--space-12); border-bottom: 1px solid var(--color-border);">
-                                <strong>${deck.company_name}</strong>
-                                <span style="color: var(--color-text-secondary); font-size: var(--font-size-sm); margin-left: var(--space-8);">
-                                    ${deck.industry} • ${date}
-                                </span>
+                            <div style="padding: var(--space-3) 0; border-bottom: 1px solid var(--color-divider); display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <strong style="font-size: var(--text-sm);">${criteria.industryPersona || 'Outreach Playbook'}</strong>
+                                    <span style="color: var(--color-text-muted); font-size: var(--text-xs); margin-left: var(--space-3);">
+                                        ${contactCount} contacts &middot; ${criteria.revenueRange || 'N/A'}
+                                    </span>
+                                </div>
+                                <span style="color: var(--color-text-faint); font-size: var(--text-xs); white-space: nowrap;">${date}</span>
                             </div>
                         `;
                     }).join('');
@@ -121,6 +159,11 @@
                 console.error('Dashboard load error:', error);
             }
         }
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            const ok = await window.appFunctions.requireAuth();
+            if (ok) await loadDashboard();
+        });
     </script>
 </body>
 </html>
