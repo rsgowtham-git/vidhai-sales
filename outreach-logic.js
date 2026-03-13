@@ -415,15 +415,15 @@ async function generateOutreach() {
     };
 
     try {
-        // Step 1: Searching contacts
-        updateProgress(15, 'Searching for matching contacts...');
+        // Step 1: Searching the web for real companies
+        updateProgress(15, 'Searching the web for matching companies...');
         await sleep(600);
 
-        updateProgress(30, 'Applying ICP filters...');
+        updateProgress(30, 'Discovering prospects and generating outreach...');
         await sleep(400);
 
-        // Step 2: Call the API
-        updateProgress(45, 'Finding prospects and generating outreach content...');
+        // Step 2: Call the API (this may take 30-60 seconds as AI searches the web)
+        updateProgress(45, 'AI is researching companies and building outreach... this may take a moment');
 
         const response = await fetch('/api/outreach-generate', {
             method: 'POST',
@@ -432,7 +432,11 @@ async function generateOutreach() {
         });
 
         if (!response.ok) {
-            throw new Error('API error: ' + response.status);
+            const errData = await response.json().catch(() => ({}));
+            if (response.status === 504 || response.status === 502) {
+                throw new Error('Request timed out. The AI search is taking longer than expected. Try reducing the number of contacts or try again.');
+            }
+            throw new Error(errData.error || 'API error: ' + response.status);
         }
 
         const result = await response.json();

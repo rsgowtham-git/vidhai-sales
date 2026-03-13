@@ -246,6 +246,110 @@ IMPORTANT:
     }
 }
 
+// Combined discovery + outreach generation in a SINGLE API call
+// Uses Google Search grounding to find real companies and generates all content at once
+async function discoverAndEnrich(criteria, geminiApiKey) {
+    const count = Math.min(parseInt(criteria.contactCount) || 5, 8);
+    const jobTitles = criteria.jobTitles && criteria.jobTitles.length > 0
+        ? criteria.jobTitles.join(', ')
+        : 'VP Engineering, Director Product Development, VP Manufacturing';
+    const locations = criteria.locations && criteria.locations.length > 0
+        ? criteria.locations.join(', ')
+        : 'United States';
+
+    const prompt = `You are Technosoft Engineering's sales intelligence assistant. Search the web to find ${count} REAL companies and their engineering leaders matching this ICP:
+
+- Industry: ${criteria.industryPersona}
+- Revenue: ${criteria.revenueRange}
+- Employees: ${criteria.employeeCount || 'Any'}
+- Geography: ${locations}
+- Target Titles: ${jobTitles}
+
+For EACH discovered contact, generate a complete outreach package.
+
+Return ONLY a valid JSON array. Each object must have these exact fields:
+{
+  "companyName": "real company name",
+  "industry": "specific industry",
+  "revenue": "approximate revenue",
+  "hqLocation": "city, state",
+  "employees": "count",
+  "firstName": "real person first name",
+  "lastName": "real person last name",
+  "title": "their actual title",
+  "email": "firstname.lastname@company.com",
+  "phone": "Look up on LinkedIn",
+  "researchSummary": "2-3 paragraphs about this person and company, focusing on engineering needs and pain points Technosoft can address",
+  "connectionRequest": "LinkedIn connection request, MAX 200 characters, personal and specific",
+  "inmailSubject": "InMail subject line",
+  "inmailDraft": "150-200 word InMail: reference their challenges, one Technosoft capability, CTA for 15-min call",
+  "coldCallScript": "Full script with: OPENER (30-45 sec intro+hook), QUALIFICATION QUESTIONS (3), TALKING POINTS (3 Technosoft capabilities), OBJECTION HANDLING (2 objections+responses), CLOSE (ask for meeting)"
+}
+
+About Technosoft Engineering: Global provider of Digital Engineering, Product Engineering, and Manufacturing Engineering. Capabilities include mechanical design/CAD (SolidWorks, NX), embedded systems/IoT, electrical design, testing/validation, turnkey automation (AGV/AMR, robotics, AI vision), plant engineering, data analytics, digital twins. Typical clients: Fortune 1000 manufacturers >$300M revenue. Value prop: reduce time-to-market, offload engineering backlog, cost-effective onsite/offshore model.
+
+IMPORTANT: Use REAL companies found via web search. Return ONLY the JSON array, no markdown.`;
+
+    try {
+        const response = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${geminiApiKey}`,
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: prompt }] }],
+                    tools: [{ google_search: {} }],
+                    generationConfig: { temperature: 0.4, maxOutputTokens: 16384 }
+                })
+            }
+        );
+
+        if (!response.ok) {
+            const errText = await response.text();
+            console.error(`Combined discovery error ${response.status}:`, errText);
+            return null;
+        }
+
+        const data = await response.json();
+        const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+        // Extract JSON array from response
+        let jsonStr = text;
+        const jsonMatch = text.match(/\[\s*\{[\s\S]*\}\s*\]/);
+        if (jsonMatch) jsonStr = jsonMatch[0];
+
+        const contacts = JSON.parse(jsonStr);
+        if (!Array.isArray(contacts) || contacts.length === 0) return null;
+
+        // Clean and validate each contact
+        return contacts
+            .filter(c => c.companyName && c.firstName && c.firstName !== 'Not Found')
+            .map(c => {
+                const domain = (c.companyName || '').toLowerCase().replace(/[^a-z0-9]/g, '') + '.com';
+                return {
+                    firstName: c.firstName,
+                    lastName: c.lastName || '',
+                    title: c.title && c.title !== 'Not Found' ? c.title : 'Engineering Leader',
+                    companyName: c.companyName,
+                    industry: c.industry || criteria.industryPersona,
+                    revenue: c.revenue || criteria.revenueRange,
+                    hqLocation: c.hqLocation || '',
+                    employees: c.employees || '',
+                    email: c.email || `${(c.firstName || '').toLowerCase()}.${(c.lastName || '').toLowerCase()}@${domain}`,
+                    phone: c.phone || 'Look up on LinkedIn',
+                    researchSummary: c.researchSummary || '',
+                    connectionRequest: (c.connectionRequest || '').substring(0, 200),
+                    inmailSubject: c.inmailSubject || `Engineering Partnership Opportunity for ${c.companyName}`,
+                    inmailDraft: c.inmailDraft || '',
+                    coldCallScript: c.coldCallScript || ''
+                };
+            });
+    } catch (err) {
+        console.error('Combined discovery error:', err.message);
+        return null;
+    }
+}
+
 // Generate all outreach content for a single contact via Gemini
 async function generateOutreachContent(contact, geminiKey) {
     const contactInfo = `Contact: ${contact.firstName} ${contact.lastName}, ${contact.title} at ${contact.companyName}
@@ -399,47 +503,32 @@ module.exports = async function handler(req, res) {
             return res.status(200).json({ mock: true, contacts: enriched, criteria: body });
         }
 
-        // Real mode: Discover contacts using Gemini + Google Search grounding
-        // Step 1: Find real companies and people matching ICP criteria
-        const discovered = await discoverContacts(body, geminiKey);
-        if (discovered && discovered.length > 0) {
-            contacts = discovered;
-        } else {
-            // Fallback to mock contacts if discovery fails
-            console.error('Contact discovery failed, falling back to built-in list');
-            contacts = getMockContacts(body);
-        }
+        // Real mode: Discover + Enrich in a SINGLE Gemini call
+        // Combined approach avoids multiple API calls and Vercel timeout
+        const enrichedContacts = await discoverAndEnrich(body, geminiKey);
 
-        // Step 2: Enrich each contact with LinkedIn + AI outreach content
-        // Skip individual LinkedIn lookups in discover mode to save API calls
-        // (discovery prompt already found real people, so provide search links)
-        const enrichedContacts = [];
-        for (const contact of contacts) {
-            try {
-                // Provide LinkedIn search link for each discovered contact
+        if (enrichedContacts && enrichedContacts.length > 0) {
+            // Add LinkedIn search links to each contact
+            for (const contact of enrichedContacts) {
                 if (!contact.linkedinUrl) {
                     contact.linkedinUrl = buildLinkedInSearchUrl(
                         contact.firstName, contact.lastName, contact.companyName
                     );
                     contact.linkedinIsSearch = true;
                 }
-
-                // Generate AI outreach content (with delay to respect rate limits)
-                if (enrichedContacts.length > 0) await sleep(2000);
-                const outreach = await generateOutreachContent(contact, geminiKey);
-                enrichedContacts.push({ ...contact, ...outreach });
-            } catch (err) {
-                console.error(`Error enriching contact ${contact.firstName} ${contact.lastName}:`, err.message);
-                const outreach = generateMockOutreach(contact);
-                enrichedContacts.push({ ...contact, ...outreach });
             }
+            return res.status(200).json({
+                mock: false,
+                contacts: enrichedContacts,
+                criteria: body
+            });
         }
 
-        return res.status(200).json({
-            mock: false,
-            contacts: enrichedContacts,
-            criteria: body
-        });
+        // Fallback: mock contacts with mock outreach if combined call fails
+        console.error('Combined discovery failed, returning mock data');
+        contacts = getMockContacts(body);
+        const fallbackEnriched = contacts.map(c => ({ ...c, ...generateMockOutreach(c) }));
+        return res.status(200).json({ mock: true, contacts: fallbackEnriched, criteria: body });
 
     } catch (error) {
         console.error('Outreach generation error:', error);
