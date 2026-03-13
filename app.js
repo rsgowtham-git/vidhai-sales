@@ -49,6 +49,108 @@ window.appFunctions = {
             .single();
 
         return profile?.allowed_access === true;
+    },
+
+    async getCurrentUser() {
+        if (!supabase) return null;
+        const { data: { user } } = await supabase.auth.getUser();
+        return user;
+    },
+
+    async getUserProfile() {
+        if (!supabase) return null;
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return null;
+
+        const { data: profile } = await supabase
+            .from('user_profiles')
+            .select('*')
+            .eq('id', user.id)
+            .single();
+
+        return profile;
+    },
+
+    async isAdmin() {
+        if (!supabase) return false;
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return false;
+
+        const { data: profile } = await supabase
+            .from('user_profiles')
+            .select('role')
+            .eq('id', user.id)
+            .single();
+
+        return profile?.role === 'admin';
+    },
+
+    async requireAuth() {
+        const isAuthenticated = await this.checkAuth();
+        if (!isAuthenticated) {
+            window.location.href = 'login.html';
+            return false;
+        }
+        return true;
+    },
+
+    async requireAdmin() {
+        const isAuthenticated = await this.checkAuth();
+        if (!isAuthenticated) {
+            window.location.href = 'login.html';
+            return false;
+        }
+        const admin = await this.isAdmin();
+        if (!admin) {
+            window.location.href = 'dashboard.html';
+            return false;
+        }
+        return true;
+    },
+
+    async getDashboardStats() {
+        if (!supabase) return { totalDecks: 0, recentDecks: 0, topIndustries: [] };
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return { totalDecks: 0, recentDecks: 0, topIndustries: [] };
+
+        // Total outreach playbooks
+        const { data: allOutreach } = await supabase
+            .from('generated_outreach')
+            .select('id, icp_criteria, created_at')
+            .eq('user_id', user.id);
+
+        const total = allOutreach?.length || 0;
+
+        // This week
+        const weekAgo = new Date();
+        weekAgo.setDate(weekAgo.getDate() - 7);
+        const recent = (allOutreach || []).filter(d => new Date(d.created_at) > weekAgo).length;
+
+        // Top industries
+        const industries = {};
+        (allOutreach || []).forEach(d => {
+            const ind = d.icp_criteria?.industryPersona || 'Unknown';
+            industries[ind] = (industries[ind] || 0) + 1;
+        });
+        const topIndustries = Object.entries(industries)
+            .sort((a, b) => b[1] - a[1])
+            .map(([name]) => name);
+
+        return { totalDecks: total, recentDecks: recent, topIndustries };
+    },
+
+    async getDeckHistory() {
+        if (!supabase) return [];
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return [];
+
+        const { data } = await supabase
+            .from('generated_outreach')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false });
+
+        return data || [];
     }
 };
 
@@ -79,6 +181,11 @@ async function guardAuth() {
             window.location.href = 'login.html';
         }
     }
+}
+
+// Check auth on page load — only for non-admin pages (admin has its own guard)
+function checkAuth() {
+    guardAuth();
 }
 
 // Initialize auth guard
@@ -131,4 +238,24 @@ function showToast(message, duration = 3000) {
         toast.classList.remove('toast-show');
         setTimeout(() => toast.remove(), 300);
     }, duration);
+}
+
+// Utility: Populate nav with user info
+async function initNav() {
+    const userEl = document.getElementById('navUserEmail');
+    const adminLink = document.getElementById('navAdminLink');
+
+    if (userEl) {
+        const user = await window.appFunctions.getCurrentUser();
+        if (user) {
+            userEl.textContent = user.email;
+        }
+    }
+
+    if (adminLink) {
+        const isAdmin = await window.appFunctions.isAdmin();
+        if (isAdmin) {
+            adminLink.style.display = '';
+        }
+    }
 }
