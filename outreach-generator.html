@@ -1,29 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script>document.documentElement.setAttribute('data-theme',window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light')</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Outreach Generator - Vidhai Sales</title>
+    <title>Outreach Generator - Vidhai Sales Intelligence</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="style-extended.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://unpkg.com/docx@8.5.0/build/index.umd.min.js"></script>
 </head>
 <body>
     <nav class="nav">
-        <div class="nav-container">
-            <div class="nav-brand">
-                <h1>Vidhai</h1>
-                <span class="nav-subtitle">Outreach Generator</span>
+        <div class="nav__inner">
+            <a href="dashboard.html" class="nav__logo">
+                <svg width="28" height="28" viewBox="0 0 40 40" fill="none" aria-label="Vidhai">
+                    <rect width="40" height="40" rx="8" fill="var(--color-primary)"/>
+                    <path d="M12 14L20 28L28 14" stroke="var(--color-text-inverse)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Vidhai
+                <span class="nav__logo-badge">Sales</span>
+            </a>
+            <ul class="nav__links">
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="outreach-generator.html" class="active">Outreach</a></li>
+                <li><a href="history.html">History</a></li>
+                <li><a href="admin.html" id="navAdminLink" style="display:none;">Admin</a></li>
+            </ul>
+            <div class="nav__actions">
+                <span class="nav__user" id="navUserEmail"></span>
+                <button onclick="handleLogout()" class="btn-secondary btn-sm">Sign Out</button>
+                <button class="nav__mobile-toggle" onclick="toggleMobileNav()" aria-label="Menu">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
             </div>
-            <div class="nav-links">
-                <a href="dashboard.html">← Dashboard</a>
-                <button onclick="handleLogout()" class="btn-secondary">Sign Out</button>
-            </div>
+        </div>
+        <div class="nav__mobile-menu" id="mobileMenu">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="outreach-generator.html" class="active">Outreach</a>
+            <a href="history.html">History</a>
+            <a href="admin.html" id="navAdminLinkMobile" style="display:none;">Admin</a>
+            <button onclick="handleLogout()" class="btn-secondary btn-sm" style="align-self:flex-start;">Sign Out</button>
         </div>
     </nav>
 
-    <main class="container">
+    <main class="container page-content">
         <div class="page-header">
             <h1>Outreach Generator</h1>
             <p>Generate personalized prospect playbooks with AI-powered outreach content</p>
@@ -33,12 +53,12 @@
             <form id="outreachForm">
                 <div class="form-grid">
                     <div class="form-group">
-                        <label class="label" for="industryPersona">Industry / Company Persona *</label>
+                        <label class="label" for="industryPersona">Industry / Company Persona <span style="color: var(--color-error);">*</span></label>
                         <input type="text" id="industryPersona" class="input" placeholder="e.g., Transportation Equipment Manufacturing" required>
                     </div>
 
                     <div class="form-group">
-                        <label class="label" for="revenueRange">Revenue Range *</label>
+                        <label class="label" for="revenueRange">Revenue Range <span style="color: var(--color-error);">*</span></label>
                         <select id="revenueRange" class="input" required>
                             <option value="">Select revenue range...</option>
                             <option value="$300M-$500M">$300M - $500M</option>
@@ -58,7 +78,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="label" for="contactCount">Number of Contacts *</label>
+                        <label class="label" for="contactCount">Number of Contacts <span style="color: var(--color-error);">*</span></label>
                         <select id="contactCount" class="input" required>
                             <option value="5">5 contacts</option>
                             <option value="10">10 contacts</option>
@@ -104,7 +124,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="label">Job Titles (select all that apply) *</label>
+                    <label class="label">Job Titles <span style="color: var(--color-error);">*</span> <span class="label-hint">(select all that apply)</span></label>
                     <div class="checkbox-grid">
                         <label class="checkbox-label"><input type="checkbox" name="jobTitle" value="VP Engineering"> <span>VP Engineering</span></label>
                         <label class="checkbox-label"><input type="checkbox" name="jobTitle" value="Director Product Development"> <span>Director Product Development</span></label>
@@ -118,11 +138,11 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="label" for="customTitle">Custom Job Title (optional)</label>
+                    <label class="label" for="customTitle">Custom Job Title <span class="label-hint">(optional)</span></label>
                     <input type="text" id="customTitle" class="input" placeholder="e.g., Head of Automation">
                 </div>
 
-                <button type="submit" class="btn-primary btn-full" id="generateBtn">
+                <button type="submit" class="btn-primary btn-full btn-lg" id="generateBtn">
                     Generate Playbook
                 </button>
 
@@ -143,7 +163,7 @@
                 </div>
             </div>
             <div id="mockBanner" class="status status--info" style="display: none;">
-                Mock Mode — Showing sample data. Configure API keys for real prospect discovery.
+                Mock Mode -- Showing sample data. Configure API keys for real prospect discovery.
             </div>
             <div id="resultSummary" class="result-summary"></div>
             <div id="contactCards" class="contact-cards"></div>
@@ -152,160 +172,11 @@
 
     <script src="app.js"></script>
     <script src="outreach-logic.js"></script>
-
-    <style>
-        .location-quick-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 0.75rem;
-            margin-top: 0.25rem;
+    <script>
+        function toggleMobileNav() {
+            document.getElementById('mobileMenu').classList.toggle('open');
         }
-
-        .btn-sm {
-            padding: 0.35rem 0.75rem;
-            font-size: 0.75rem;
-        }
-
-        .checkbox-grid-locations {
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-        }
-
-        .location-divider {
-            border-color: var(--color-primary);
-        }
-
-        .result-summary {
-            display: flex;
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-        }
-
-        .summary-stat {
-            background: var(--color-bg-alt);
-            padding: 0.75rem 1.25rem;
-            border-radius: 0.5rem;
-            font-size: 0.875rem;
-        }
-
-        .summary-stat strong {
-            color: var(--color-primary);
-            font-size: 1.25rem;
-            display: block;
-        }
-
-        .contact-cards {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .contact-card {
-            border: 1px solid var(--color-border);
-            border-radius: 0.75rem;
-            overflow: hidden;
-            background: var(--color-surface);
-        }
-
-        .contact-card-header {
-            padding: 1.25rem;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: background 0.2s;
-        }
-
-        .contact-card-header:hover {
-            background: var(--color-secondary);
-        }
-
-        .contact-info h3 {
-            font-size: 1.125rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .contact-info .contact-meta {
-            font-size: 0.8125rem;
-            color: var(--color-text-secondary);
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .expand-icon {
-            font-size: 1.25rem;
-            transition: transform 0.2s;
-            color: var(--color-text-secondary);
-        }
-
-        .contact-card.expanded .expand-icon {
-            transform: rotate(180deg);
-        }
-
-        .contact-card-body {
-            display: none;
-            padding: 0 1.25rem 1.25rem;
-            border-top: 1px solid var(--color-border);
-        }
-
-        .contact-card.expanded .contact-card-body {
-            display: block;
-        }
-
-        .outreach-section {
-            margin-top: 1.25rem;
-        }
-
-        .outreach-section h4 {
-            font-size: 0.875rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--color-primary);
-            margin-bottom: 0.5rem;
-            padding-bottom: 0.25rem;
-            border-bottom: 1px solid var(--color-border);
-        }
-
-        .outreach-section .content {
-            font-size: 0.875rem;
-            line-height: 1.6;
-            white-space: pre-wrap;
-            color: var(--color-text);
-        }
-
-        .outreach-section .char-count {
-            font-size: 0.75rem;
-            color: var(--color-text-secondary);
-            margin-top: 0.25rem;
-        }
-
-        .contact-details-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 0.5rem;
-            font-size: 0.875rem;
-            margin-top: 0.75rem;
-        }
-
-        .contact-details-grid .detail-item {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .contact-details-grid .detail-label {
-            color: var(--color-text-secondary);
-            min-width: 60px;
-        }
-
-        .contact-details-grid .detail-value {
-            color: var(--color-text);
-            word-break: break-all;
-        }
-
-        .contact-details-grid .detail-value a {
-            color: var(--color-primary);
-        }
-    </style>
+        window.addEventListener('DOMContentLoaded', () => { initNav(); });
+    </script>
 </body>
 </html>
