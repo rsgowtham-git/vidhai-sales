@@ -1,31 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script>document.documentElement.setAttribute('data-theme',window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light')</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>History - Vidhai Sales</title>
+    <title>History - Vidhai Sales Intelligence</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="style-extended.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <nav class="nav">
-        <div class="nav-container">
-            <div class="nav-brand">
-                <h1>Vidhai</h1>
-                <span class="nav-subtitle">History</span>
+        <div class="nav__inner">
+            <a href="dashboard.html" class="nav__logo">
+                <svg width="28" height="28" viewBox="0 0 40 40" fill="none" aria-label="Vidhai">
+                    <rect width="40" height="40" rx="8" fill="var(--color-primary)"/>
+                    <path d="M12 14L20 28L28 14" stroke="var(--color-text-inverse)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Vidhai
+                <span class="nav__logo-badge">Sales</span>
+            </a>
+            <ul class="nav__links">
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="outreach-generator.html">Outreach</a></li>
+                <li><a href="history.html" class="active">History</a></li>
+                <li><a href="admin.html" id="navAdminLink" style="display:none;">Admin</a></li>
+            </ul>
+            <div class="nav__actions">
+                <span class="nav__user" id="navUserEmail"></span>
+                <button onclick="handleLogout()" class="btn-secondary btn-sm">Sign Out</button>
+                <button class="nav__mobile-toggle" onclick="toggleMobileNav()" aria-label="Menu">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
             </div>
-            <div class="nav-links">
-                <a href="dashboard.html">← Dashboard</a>
-                <button onclick="handleLogout()" class="btn-secondary">Sign Out</button>
-            </div>
+        </div>
+        <div class="nav__mobile-menu" id="mobileMenu">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="outreach-generator.html">Outreach</a>
+            <a href="history.html" class="active">History</a>
+            <a href="admin.html" id="navAdminLinkMobile" style="display:none;">Admin</a>
+            <button onclick="handleLogout()" class="btn-secondary btn-sm" style="align-self:flex-start;">Sign Out</button>
         </div>
     </nav>
 
-    <main class="container">
+    <main class="container page-content">
         <div class="page-header">
             <h1>Generation History</h1>
-            <p>Browse and retrieve all your past decks and pitches</p>
+            <p>Browse and retrieve all your past playbooks and outreach content</p>
         </div>
 
         <div class="history-tabs">
@@ -35,20 +55,33 @@
         </div>
 
         <div id="decksTab" class="tab-content">
-            <div id="decksList">Loading...</div>
+            <div id="decksList" class="page-loading">
+                <span class="loading-spinner"></span>
+                Loading...
+            </div>
         </div>
 
         <div id="pitchesTab" class="tab-content" style="display: none;">
-            <div id="pitchesList">Loading...</div>
+            <div id="pitchesList" class="page-loading">
+                <span class="loading-spinner"></span>
+                Loading...
+            </div>
         </div>
 
         <div id="outreachTab" class="tab-content" style="display: none;">
-            <div id="outreachList">Loading...</div>
+            <div id="outreachList" class="page-loading">
+                <span class="loading-spinner"></span>
+                Loading...
+            </div>
         </div>
     </main>
 
     <script src="app.js"></script>
     <script>
+        function toggleMobileNav() {
+            document.getElementById('mobileMenu').classList.toggle('open');
+        }
+
         checkAuth();
         let currentTab = 'decks';
 
@@ -86,7 +119,7 @@
 
         function displayDecks(decks) {
             const listEl = document.getElementById('decksList');
-            
+
             if (decks.length === 0) {
                 listEl.innerHTML = '<p class="empty-state">No decks generated yet. <a href="deck-generator.html">Create your first one</a></p>';
                 return;
@@ -104,8 +137,8 @@
                         ${deck.contact_name ? `<span>${deck.contact_name}</span>` : ''}
                     </div>
                     <div class="history-actions">
-                        <button onclick='viewDeck(${JSON.stringify(deck.deck_content)})' class="btn-secondary">View</button>
-                        <button onclick='downloadDeckHistory(${JSON.stringify(deck.deck_content)})' class="btn-secondary">Download</button>
+                        <button onclick='viewDeck(${JSON.stringify(deck.deck_content)})' class="btn-secondary btn-sm">View</button>
+                        <button onclick='downloadDeckHistory(${JSON.stringify(deck.deck_content)})' class="btn-secondary btn-sm">Download</button>
                     </div>
                 </div>
             `).join('');
@@ -113,7 +146,7 @@
 
         function displayPitches(pitches) {
             const listEl = document.getElementById('pitchesList');
-            
+
             if (pitches.length === 0) {
                 listEl.innerHTML = '<p class="empty-state">No pitches generated yet. <a href="pitch-generator.html">Create your first one</a></p>';
                 return;
@@ -145,7 +178,7 @@
                             ${criteria.locations && criteria.locations.length > 0 ? `<span>${criteria.locations.join(', ')}</span>` : ''}
                         </div>
                         <div class="history-actions">
-                            <button onclick='viewOutreach(${JSON.stringify(item.contacts).replace(/'/g, "&#39;")})' class="btn-secondary">View</button>
+                            <button onclick='viewOutreach(${JSON.stringify(item.contacts).replace(/'/g, "&#39;")})' class="btn-secondary btn-sm">View</button>
                         </div>
                     </div>
                 `;
@@ -183,17 +216,17 @@
         function downloadDeckHistory(deckContent) {
             let text = `${deckContent.company} - Capability Deck\n`;
             text += `Generated: ${deckContent.date}\n\n`;
-            
+
             deckContent.slides.forEach((slide, idx) => {
                 text += `SLIDE ${idx + 1}: ${slide.title}\n${'='.repeat(60)}\n`;
                 if (slide.content) text += `${slide.content}\n\n`;
                 if (slide.bullets) {
-                    slide.bullets.forEach(b => text += `• ${b}\n`);
+                    slide.bullets.forEach(b => text += `- ${b}\n`);
                     text += '\n';
                 }
                 if (slide.outcome) text += `OUTCOME: ${slide.outcome}\n\n`;
             });
-            
+
             downloadTextFile(text, `${deckContent.company}_Deck.txt`);
         }
 
@@ -202,80 +235,10 @@
             window.location.href = 'login.html';
         }
 
-        loadHistory();
+        window.addEventListener('DOMContentLoaded', () => {
+            initNav();
+            loadHistory();
+        });
     </script>
-
-    <style>
-        .history-tabs {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            border-bottom: 2px solid var(--color-border);
-        }
-
-        .tab-btn {
-            padding: 1rem 2rem;
-            background: none;
-            border: none;
-            border-bottom: 3px solid transparent;
-            cursor: pointer;
-            font-weight: 600;
-            color: var(--color-text-light);
-            transition: all 0.2s;
-        }
-
-        .tab-active {
-            color: var(--color-primary);
-            border-bottom-color: var(--color-primary);
-        }
-
-        .history-item {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 0.75rem;
-            box-shadow: var(--shadow-sm);
-            margin-bottom: 1rem;
-        }
-
-        .history-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 1rem;
-        }
-
-        .history-header h3 {
-            font-size: 1.25rem;
-        }
-
-        .history-date {
-            font-size: 0.875rem;
-            color: var(--color-text-light);
-        }
-
-        .history-meta {
-            display: flex;
-            gap: 1.5rem;
-            font-size: 0.875rem;
-            color: var(--color-text-light);
-            margin-bottom: 1rem;
-        }
-
-        .history-actions {
-            display: flex;
-            gap: 0.75rem;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            color: var(--color-text-light);
-        }
-
-        .empty-state a {
-            color: var(--color-primary);
-            text-decoration: underline;
-        }
-    </style>
 </body>
 </html>
