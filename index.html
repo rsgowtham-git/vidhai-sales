@@ -1,76 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script>document.documentElement.setAttribute('data-theme',window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light')</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sales Deck Generator - AI-Powered Pitch Decks</title>
+    <title>Vidhai Sales Intelligence</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <nav>
-                <div class="logo">Sales Deck Generator</div>
-                <div class="nav-links">
-                    <a href="index.html">Home</a>
-                    <a href="login.html" class="btn btn--primary btn--sm">Sign In</a>
+    <nav class="nav">
+        <div class="nav__inner">
+            <a href="index.html" class="nav__logo">
+                <svg width="28" height="28" viewBox="0 0 40 40" fill="none" aria-label="Vidhai">
+                    <rect width="40" height="40" rx="8" fill="var(--color-primary)"/>
+                    <path d="M12 14L20 28L28 14" stroke="var(--color-text-inverse)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Vidhai
+                <span class="nav__logo-badge">Sales</span>
+            </a>
+            <div class="nav__actions">
+                <a href="login.html" class="btn-primary btn-sm">Sign In</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section class="hero">
+            <h1>AI-Powered Sales Intelligence for Manufacturing</h1>
+            <p class="hero-subtitle">
+                Generate prospect playbooks, personalized outreach content, and data-driven sales strategies in seconds.
+            </p>
+            <div class="hero-actions">
+                <a href="login.html" class="btn-primary btn-lg">Get Started</a>
+                <a href="#features" class="btn-secondary btn-lg">Learn More</a>
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <h2>Why Vidhai Sales Intelligence?</h2>
+            <div class="features-grid">
+                <div class="card">
+                    <h3>Industry-Specific</h3>
+                    <p>Pre-loaded templates for manufacturing, CAD automation, EPDM/PLM, vision inspection, and more.</p>
                 </div>
-            </nav>
-        </header>
-
-        <main class="main-content">
-            <section class="hero">
-                <h1>Generate Custom Sales Decks in Seconds</h1>
-                <p class="hero-subtitle">
-                    AI-powered sales deck generator tailored for manufacturing and engineering solutions
-                </p>
-                <div class="hero-actions">
-                    <a href="login.html" class="btn btn--primary btn--lg">Get Started Free</a>
-                    <a href="#features" class="btn btn--secondary btn--lg">Learn More</a>
+                <div class="card">
+                    <h3>Prospect Discovery</h3>
+                    <p>Find and qualify contacts matching your ideal customer profile with AI-driven filtering.</p>
                 </div>
-            </section>
-
-            <section id="features" class="features">
-                <h2>Why Sales Deck Generator?</h2>
-                <div class="features-grid">
-                    <div class="card">
-                        <h3>🎯 Industry-Specific</h3>
-                        <p>Pre-loaded templates for manufacturing, CAD automation, EPDM/PLM, vision inspection, and more</p>
-                    </div>
-                    <div class="card">
-                        <h3>⚡ Lightning Fast</h3>
-                        <p>Generate professional pitch decks in under 10 seconds with AI-powered content matching</p>
-                    </div>
-                    <div class="card">
-                        <h3>📊 Data-Driven</h3>
-                        <p>Built-in ROI calculators, implementation timelines, and benefit quantification</p>
-                    </div>
-                    <div class="card">
-                        <h3>🔒 Secure & Private</h3>
-                        <p>Your data is encrypted and only accessible by you. Full data privacy guaranteed</p>
-                    </div>
-                    <div class="card">
-                        <h3>📈 Track History</h3>
-                        <p>Save and access all your generated decks with full search and filtering</p>
-                    </div>
-                    <div class="card">
-                        <h3>🎨 Customizable</h3>
-                        <p>Tailor every deck to your customer's specific pain points and requirements</p>
-                    </div>
+                <div class="card">
+                    <h3>Multi-Channel Outreach</h3>
+                    <p>Generate LinkedIn connection requests, InMail drafts, cold call scripts, and email templates.</p>
                 </div>
-            </section>
+                <div class="card">
+                    <h3>Data-Driven</h3>
+                    <p>Built-in ROI calculators, implementation timelines, and benefit quantification for every prospect.</p>
+                </div>
+                <div class="card">
+                    <h3>Secure and Private</h3>
+                    <p>Your data is encrypted and only accessible by you. Full data privacy guaranteed.</p>
+                </div>
+                <div class="card">
+                    <h3>Export Anywhere</h3>
+                    <p>Download playbooks as DOCX or CSV. Save and access all generated content from your history.</p>
+                </div>
+            </div>
+        </section>
 
-            <section class="cta-section">
-                <h2>Ready to Close More Deals?</h2>
-                <p>Join sales professionals using AI to create winning pitch decks</p>
-                <a href="login.html" class="btn btn--primary btn--lg">Start Generating Decks</a>
-            </section>
-        </main>
+        <section class="cta-section">
+            <h2>Ready to Close More Deals?</h2>
+            <p>Join sales professionals using AI to build winning prospect playbooks.</p>
+            <a href="login.html" class="btn-primary btn-lg">Start Generating Playbooks</a>
+        </section>
+    </main>
 
-        <footer>
-            <p>&copy; 2026 Sales Deck Generator. All rights reserved.</p>
-        </footer>
-    </div>
+    <footer class="site-footer">
+        <div class="container">
+            <p>Vidhai Sales Intelligence &middot; <a href="https://vidhai.co" target="_blank" rel="noopener">vidhai.co</a></p>
+        </div>
+    </footer>
 </body>
 </html>

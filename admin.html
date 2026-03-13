@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>document.documentElement.setAttribute('data-theme',window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light')</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Vidhai Sales Intelligence</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav__inner">
+            <a href="dashboard.html" class="nav__logo">
+                <svg width="28" height="28" viewBox="0 0 40 40" fill="none" aria-label="Vidhai">
+                    <rect width="40" height="40" rx="8" fill="var(--color-primary)"/>
+                    <path d="M12 14L20 28L28 14" stroke="var(--color-text-inverse)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Vidhai
+                <span class="nav__logo-badge">Sales</span>
+            </a>
+            <ul class="nav__links">
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="outreach-generator.html">Outreach</a></li>
+                <li><a href="history.html">History</a></li>
+                <li><a href="admin.html" class="active">Admin</a></li>
+            </ul>
+            <div class="nav__actions">
+                <span class="nav__user" id="navUserEmail"></span>
+                <button onclick="handleLogout()" class="btn-secondary btn-sm">Sign Out</button>
+                <button class="nav__mobile-toggle" onclick="toggleMobileNav()" aria-label="Menu">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+            </div>
+        </div>
+        <div class="nav__mobile-menu" id="mobileMenu">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="outreach-generator.html">Outreach</a>
+            <a href="history.html">History</a>
+            <a href="admin.html" class="active">Admin</a>
+            <button onclick="handleLogout()" class="btn-secondary btn-sm" style="align-self:flex-start;">Sign Out</button>
+        </div>
+    </nav>
+
+    <!-- Loading state (shown until admin check completes) -->
+    <div id="adminLoading" class="page-loading" style="min-height: 80vh;">
+        <span class="loading-spinner"></span>
+        Verifying admin access...
+    </div>
+
+    <!-- Main content (hidden until admin check passes) -->
+    <main id="adminContent" class="container page-content" style="display: none;">
+        <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: var(--space-4);">
+            <div>
+                <h1>User Management</h1>
+                <p>Manage user accounts, access controls, and roles</p>
+            </div>
+            <button class="btn-primary" onclick="openAddUserModal()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add User
+            </button>
+        </div>
+
+        <div id="adminError" class="status status--error" style="display: none;"></div>
+        <div id="adminSuccess" class="status status--success" style="display: none;"></div>
+
+        <div class="card" style="padding: 0; overflow: hidden;">
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Email</th>
+                            <th>Name</th>
+                            <th>Role</th>
+                            <th>Access</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: var(--space-8);">
+                                <span class="loading-spinner" style="margin: 0 auto;"></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add User Modal -->
+    <div class="modal-overlay" id="addUserModal">
+        <div class="modal">
+            <h2>Add New User</h2>
+            <form id="addUserForm">
+                <div class="form-group">
+                    <label class="label" for="newUserEmail">Email</label>
+                    <input type="email" id="newUserEmail" class="input" required placeholder="user@company.com">
+                </div>
+                <div class="form-group">
+                    <label class="label" for="newUserPassword">Temporary Password</label>
+                    <input type="text" id="newUserPassword" class="input" required placeholder="Minimum 6 characters" minlength="6">
+                    <span class="form-hint">The user should change this after first login.</span>
+                </div>
+                <div id="addUserError" class="status status--error" style="display: none;"></div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeAddUserModal()">Cancel</button>
+                    <button type="submit" class="btn-primary" id="addUserBtn">Create User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Confirm Delete Modal -->
+    <div class="modal-overlay" id="deleteUserModal">
+        <div class="modal">
+            <h2>Delete User</h2>
+            <p style="color: var(--color-text-muted); font-size: var(--text-sm); margin-bottom: var(--space-4);">
+                Are you sure you want to delete <strong id="deleteUserEmail"></strong>? This action cannot be undone. The user will be removed from both authentication and all profile data.
+            </p>
+            <div id="deleteUserError" class="status status--error" style="display: none;"></div>
+            <div class="modal-actions">
+                <button class="btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+                <button class="btn-danger" onclick="confirmDeleteUser()" id="confirmDeleteBtn">Delete User</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        let allUsers = [];
+        let deleteUserId = null;
+
+        function toggleMobileNav() {
+            document.getElementById('mobileMenu').classList.toggle('open');
+        }
+
+        async function handleLogout() {
+            await supabase.auth.signOut();
+            window.location.href = 'login.html';
+        }
+
+        // Get auth token for API calls
+        async function getAuthToken() {
+            const { data: { session } } = await supabase.auth.getSession();
+            return session?.access_token;
+        }
+
+        // Admin API helper
+        async function adminAPI(method, body = null) {
+            const token = await getAuthToken();
+            const opts = {
+                method,
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            };
+            if (body) opts.body = JSON.stringify(body);
+
+            const res = await fetch('/api/admin-users', opts);
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.error || `Request failed (${res.status})`);
+            }
+            return data;
+        }
+
+        // Show flash messages
+        function showAdminError(msg) {
+            const el = document.getElementById('adminError');
+            el.textContent = msg;
+            el.style.display = 'block';
+            setTimeout(() => { el.style.display = 'none'; }, 6000);
+        }
+
+        function showAdminSuccess(msg) {
+            const el = document.getElementById('adminSuccess');
+            el.textContent = msg;
+            el.style.display = 'block';
+            setTimeout(() => { el.style.display = 'none'; }, 4000);
+        }
+
+        // Load users
+        async function loadUsers() {
+            try {
+                const data = await adminAPI('GET');
+                allUsers = data.users || [];
+                renderUsersTable();
+            } catch (err) {
+                showAdminError('Failed to load users: ' + err.message);
+                document.getElementById('usersTableBody').innerHTML =
+                    `<tr><td colspan="6" class="empty-state">Failed to load users.</td></tr>`;
+            }
+        }
+
+        function renderUsersTable() {
+            const tbody = document.getElementById('usersTableBody');
+
+            if (allUsers.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No users found.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = allUsers.map(u => {
+                const profile = u.profile || {};
+                const isAdmin = profile.role === 'admin';
+                const hasAccess = profile.allowed_access === true;
+                const name = profile.full_name || '-';
+                const created = u.created_at ? formatDate(u.created_at) : '-';
+
+                return `
+                    <tr>
+                        <td style="font-weight: 500;">${u.email || '-'}</td>
+                        <td>${name}</td>
+                        <td><span class="badge ${isAdmin ? 'badge--admin' : 'badge--user'}">${isAdmin ? 'Admin' : 'User'}</span></td>
+                        <td>
+                            <label class="toggle">
+                                <input type="checkbox" ${hasAccess ? 'checked' : ''} onchange="toggleAccess('${u.id}', this.checked)">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </td>
+                        <td style="font-size: var(--text-xs); color: var(--color-text-muted);">${created}</td>
+                        <td>
+                            <div class="actions-cell">
+                                <button class="btn-secondary btn-sm" onclick="resetPassword('${u.id}', '${(u.email || '').replace(/'/g, "\\'")}')">Reset Password</button>
+                                <button class="btn-danger btn-sm" onclick="openDeleteModal('${u.id}', '${(u.email || '').replace(/'/g, "\\'")}')">Delete</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Toggle access
+        async function toggleAccess(userId, allowed) {
+            try {
+                await adminAPI('PATCH', { userId, allowed_access: allowed });
+                showToast(allowed ? 'Access granted' : 'Access revoked');
+            } catch (err) {
+                showAdminError('Failed to update access: ' + err.message);
+                await loadUsers(); // Revert UI
+            }
+        }
+
+        // Reset password
+        async function resetPassword(userId, email) {
+            if (!confirm(`Send password reset email to ${email}?`)) return;
+
+            try {
+                await adminAPI('POST', { action: 'reset-password', userId, email });
+                showAdminSuccess(`Password reset email sent to ${email}`);
+            } catch (err) {
+                showAdminError('Failed to send reset email: ' + err.message);
+            }
+        }
+
+        // Delete user
+        function openDeleteModal(userId, email) {
+            deleteUserId = userId;
+            document.getElementById('deleteUserEmail').textContent = email;
+            document.getElementById('deleteUserError').style.display = 'none';
+            document.getElementById('deleteUserModal').classList.add('open');
+        }
+
+        function closeDeleteModal() {
+            deleteUserId = null;
+            document.getElementById('deleteUserModal').classList.remove('open');
+        }
+
+        async function confirmDeleteUser() {
+            if (!deleteUserId) return;
+            const btn = document.getElementById('confirmDeleteBtn');
+            btn.disabled = true;
+            btn.textContent = 'Deleting...';
+
+            try {
+                await adminAPI('DELETE', { userId: deleteUserId });
+                showAdminSuccess('User deleted successfully');
+                closeDeleteModal();
+                await loadUsers();
+            } catch (err) {
+                const errEl = document.getElementById('deleteUserError');
+                errEl.textContent = err.message;
+                errEl.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Delete User';
+            }
+        }
+
+        // Add user modal
+        function openAddUserModal() {
+            document.getElementById('addUserForm').reset();
+            document.getElementById('addUserError').style.display = 'none';
+            document.getElementById('addUserModal').classList.add('open');
+        }
+
+        function closeAddUserModal() {
+            document.getElementById('addUserModal').classList.remove('open');
+        }
+
+        document.getElementById('addUserForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('newUserEmail').value;
+            const password = document.getElementById('newUserPassword').value;
+            const btn = document.getElementById('addUserBtn');
+            const errEl = document.getElementById('addUserError');
+
+            errEl.style.display = 'none';
+            btn.disabled = true;
+            btn.textContent = 'Creating...';
+
+            try {
+                await adminAPI('POST', { action: 'create-user', email, password });
+                showAdminSuccess(`User ${email} created successfully`);
+                closeAddUserModal();
+                await loadUsers();
+            } catch (err) {
+                errEl.textContent = err.message;
+                errEl.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Create User';
+            }
+        });
+
+        // Close modals on overlay click
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    overlay.classList.remove('open');
+                }
+            });
+        });
+
+        // Init
+        window.addEventListener('DOMContentLoaded', async () => {
+            const user = await window.appFunctions.getCurrentUser();
+            if (user) {
+                document.getElementById('navUserEmail').textContent = user.email;
+            }
+
+            const isAdmin = await window.appFunctions.requireAdmin();
+            if (!isAdmin) return;
+
+            document.getElementById('adminLoading').style.display = 'none';
+            document.getElementById('adminContent').style.display = '';
+
+            await loadUsers();
+        });
+    </script>
+</body>
+</html>
