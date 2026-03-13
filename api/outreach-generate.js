@@ -1,5 +1,6 @@
 // Vercel Serverless Function: /api/outreach-generate
 // Handles ICP-based prospect discovery and outreach content generation
+// Supports two modes: 'discover' (built-in contacts) and 'upload' (user-provided CSV contacts)
 
 const TECHNOSOFT_CONTEXT = `You are an expert B2B sales assistant for Technosoft Engineering, a global provider of Digital Engineering & Consulting, Product Engineering, and Manufacturing Engineering services. Technosoft operates in North America and Europe, supporting Transportation, Industrial Products, Process Industry, Medical Equipment, Energy, and Furniture manufacturers.
 
@@ -15,79 +16,21 @@ Key capabilities:
 Typical clients: Fortune 1000 and mid-market manufacturers (>$300M revenue) in US/Canada.
 Value proposition: Reduce time-to-market, offload engineering backlog, deliver cost-effective high-quality engineering capacity with an onsite/offshore model.`;
 
-// Mock data for realistic demo
+const GEMINI_MODEL = 'gemini-2.5-flash';
+
+// Mock data for discover mode fallback
 function getMockContacts(criteria) {
     const mockCompanies = [
-        {
-            companyName: 'Lincoln Electric Holdings',
-            industry: 'Industrial Manufacturing',
-            revenue: '$3.8B',
-            hqLocation: 'Cleveland, OH',
-            employees: '12,000+'
-        },
-        {
-            companyName: 'Textron Inc',
-            industry: 'Aerospace & Defense',
-            revenue: '$13.7B',
-            hqLocation: 'Providence, RI',
-            employees: '33,000+'
-        },
-        {
-            companyName: 'Parker Hannifin',
-            industry: 'Industrial Manufacturing',
-            revenue: '$19.1B',
-            hqLocation: 'Cleveland, OH',
-            employees: '58,000+'
-        },
-        {
-            companyName: 'BorgWarner Inc',
-            industry: 'Automotive Components',
-            revenue: '$14.2B',
-            hqLocation: 'Auburn Hills, MI',
-            employees: '44,000+'
-        },
-        {
-            companyName: 'PACCAR Inc',
-            industry: 'Transportation Equipment',
-            revenue: '$35.1B',
-            hqLocation: 'Bellevue, WA',
-            employees: '29,000+'
-        },
-        {
-            companyName: 'Roper Technologies',
-            industry: 'Diversified Industrial',
-            revenue: '$5.6B',
-            hqLocation: 'Sarasota, FL',
-            employees: '16,400+'
-        },
-        {
-            companyName: 'AMETEK Inc',
-            industry: 'Electronic Instruments',
-            revenue: '$6.6B',
-            hqLocation: 'Berwyn, PA',
-            employees: '21,000+'
-        },
-        {
-            companyName: 'Cummins Inc',
-            industry: 'Power Solutions',
-            revenue: '$34.1B',
-            hqLocation: 'Columbus, IN',
-            employees: '73,600+'
-        },
-        {
-            companyName: 'Illinois Tool Works',
-            industry: 'Diversified Manufacturing',
-            revenue: '$16.1B',
-            hqLocation: 'Glenview, IL',
-            employees: '46,000+'
-        },
-        {
-            companyName: 'Dover Corporation',
-            industry: 'Industrial Manufacturing',
-            revenue: '$8.5B',
-            hqLocation: 'Downers Grove, IL',
-            employees: '25,000+'
-        }
+        { companyName: 'Lincoln Electric Holdings', industry: 'Industrial Manufacturing', revenue: '$3.8B', hqLocation: 'Cleveland, OH', employees: '12,000+' },
+        { companyName: 'Textron Inc', industry: 'Aerospace & Defense', revenue: '$13.7B', hqLocation: 'Providence, RI', employees: '33,000+' },
+        { companyName: 'Parker Hannifin', industry: 'Industrial Manufacturing', revenue: '$19.1B', hqLocation: 'Cleveland, OH', employees: '58,000+' },
+        { companyName: 'BorgWarner Inc', industry: 'Automotive Components', revenue: '$14.2B', hqLocation: 'Auburn Hills, MI', employees: '44,000+' },
+        { companyName: 'PACCAR Inc', industry: 'Transportation Equipment', revenue: '$35.1B', hqLocation: 'Bellevue, WA', employees: '29,000+' },
+        { companyName: 'Roper Technologies', industry: 'Diversified Industrial', revenue: '$5.6B', hqLocation: 'Sarasota, FL', employees: '16,400+' },
+        { companyName: 'AMETEK Inc', industry: 'Electronic Instruments', revenue: '$6.6B', hqLocation: 'Berwyn, PA', employees: '21,000+' },
+        { companyName: 'Cummins Inc', industry: 'Power Solutions', revenue: '$34.1B', hqLocation: 'Columbus, IN', employees: '73,600+' },
+        { companyName: 'Illinois Tool Works', industry: 'Diversified Manufacturing', revenue: '$16.1B', hqLocation: 'Glenview, IL', employees: '46,000+' },
+        { companyName: 'Dover Corporation', industry: 'Industrial Manufacturing', revenue: '$8.5B', hqLocation: 'Downers Grove, IL', employees: '25,000+' }
     ];
 
     const mockTitles = criteria.jobTitles && criteria.jobTitles.length > 0
@@ -95,7 +38,7 @@ function getMockContacts(criteria) {
         : ['VP Engineering', 'Director Product Development', 'VP Manufacturing'];
 
     const mockFirstNames = ['James', 'Sarah', 'Michael', 'Jennifer', 'Robert', 'Lisa', 'David', 'Karen', 'William', 'Patricia'];
-    const mockLastNames = ['Anderson', 'Mitchell', 'Thompson', 'Rodriguez', 'Nakamura', 'Patel', 'O\'Brien', 'Chen', 'Kowalski', 'Fernandez'];
+    const mockLastNames = ['Anderson', 'Mitchell', 'Thompson', 'Rodriguez', 'Nakamura', 'Patel', "O'Brien", 'Chen', 'Kowalski', 'Fernandez'];
 
     const count = Math.min(parseInt(criteria.contactCount) || 5, mockCompanies.length);
     const contacts = [];
@@ -108,9 +51,7 @@ function getMockContacts(criteria) {
         const emailDomain = company.companyName.toLowerCase().replace(/[^a-z]/g, '') + '.com';
 
         contacts.push({
-            firstName,
-            lastName,
-            title,
+            firstName, lastName, title,
             email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@${emailDomain}`,
             phone: `+1 (${String(200 + i * 100 + Math.floor(Math.random() * 99)).padStart(3, '0')}) ${String(400 + Math.floor(Math.random() * 599)).padStart(3, '0')}-${String(1000 + Math.floor(Math.random() * 8999))}`,
             linkedinUrl: `https://linkedin.com/in/${firstName.toLowerCase()}-${lastName.toLowerCase()}-${String(Math.floor(Math.random() * 9000) + 1000)}`,
@@ -118,147 +59,150 @@ function getMockContacts(criteria) {
             industry: company.industry,
             revenue: company.revenue,
             hqLocation: company.hqLocation,
-            employees: company.employees,
-            researchSummary: generateMockResearch(firstName, lastName, title, company),
-            connectionRequest: generateMockConnectionRequest(firstName, title, company),
-            inmailSubject: `Engineering Partnership Opportunity for ${company.companyName}`,
-            inmailDraft: generateMockInmail(firstName, lastName, title, company),
-            coldCallScript: generateMockColdCall(firstName, lastName, title, company)
+            employees: company.employees
         });
     }
 
     return contacts;
 }
 
-function generateMockResearch(firstName, lastName, title, company) {
-    return `${firstName} ${lastName} serves as ${title} at ${company.companyName}, a ${company.revenue} revenue ${company.industry.toLowerCase()} company headquartered in ${company.hqLocation} with ${company.employees} employees globally.
-
-${company.companyName} has been investing heavily in digital transformation and manufacturing modernization. Recent industry analysis suggests the company is focused on improving operational efficiency, reducing time-to-market for new products, and implementing Industry 4.0 technologies across their facilities.
-
-As ${title}, ${firstName} likely oversees engineering operations, product development cycles, and technology adoption decisions. Key pain points for leaders in this role typically include managing engineering backlog, accelerating product development timelines, integrating automation and IoT solutions, and maintaining quality standards while scaling operations. Technosoft's expertise in CAD services, embedded systems, turnkey automation (AGV/AMR, robotics), and plant engineering directly addresses these challenges.`;
-}
-
-function generateMockConnectionRequest(firstName, title, company) {
-    const messages = [
-        `Hi ${firstName}, I noticed ${company.companyName}'s push into advanced manufacturing. As a ${title}, I'd love to share how we've helped similar firms cut engineering backlogs by 40%.`,
-        `${firstName}, impressed by ${company.companyName}'s growth trajectory. We specialize in engineering services for ${company.industry.toLowerCase()} — would love to connect and share insights.`,
-        `Hi ${firstName}, fellow engineering enthusiast here. We've helped companies like ${company.companyName} accelerate product development. Would love to connect and exchange ideas.`
-    ];
-    const msg = messages[Math.floor(Math.random() * messages.length)];
-    return msg.substring(0, 200);
-}
-
-function generateMockInmail(firstName, lastName, title, company) {
-    return `Hi ${firstName},
-
-I hope this message finds you well. I've been following ${company.companyName}'s impressive growth in the ${company.industry.toLowerCase()} space, and I wanted to reach out because I believe there's a strong alignment between your engineering priorities and our capabilities at Technosoft Engineering.
-
-Many ${title}s at companies similar to ${company.companyName} are dealing with growing engineering backlogs, pressure to accelerate time-to-market, and the challenge of scaling technical teams without compromising quality. We've helped manufacturers like Harley-Davidson, Thor Industries, and Illinois Tool Works address exactly these challenges through our onsite/offshore engineering model.
-
-Specifically, I think our turnkey automation solutions (AGV/AMR, robotics, AI vision inspection) and our CAD/product engineering services could significantly impact ${company.companyName}'s operational efficiency.
-
-Would you be open to a brief 15-minute call next week to explore whether there's a fit? I'd love to share a few relevant case studies from the ${company.industry.toLowerCase()} sector.
-
-Best regards`;
-}
-
-function generateMockColdCall(firstName, lastName, title, company) {
-    return `OPENER (30-45 seconds):
-"Hi ${firstName}, this is [Your Name] from Technosoft Engineering. I know I'm calling out of the blue, so I'll be brief. We work with ${company.industry.toLowerCase()} companies like ${company.companyName} to help them accelerate product development and reduce engineering costs through our specialized engineering services. I noticed ${company.companyName} has been expanding, and I wanted to see if you're facing any of the challenges we typically help with. Do you have just two minutes?"
-
-QUALIFICATION QUESTIONS:
-1. "How is ${company.companyName} currently handling peak engineering workloads? Are you primarily using internal teams or do you leverage external engineering partners?"
-2. "What's your biggest bottleneck right now in getting products from concept to production? Is it design capacity, testing/validation, or something else?"
-3. "Has ${company.companyName} been exploring automation or Industry 4.0 initiatives? If so, what stage are those projects in?"
-
-TALKING POINTS:
-1. Engineering Capacity: "We provide dedicated engineering teams that integrate seamlessly with your existing workflows — our clients typically see a 40% reduction in engineering backlog within the first quarter."
-2. Cost Efficiency: "Our onsite/offshore model delivers Fortune 500 quality engineering at a 30-40% cost reduction compared to adding full-time headcount."
-3. Domain Expertise: "We've delivered 250+ projects in ${company.industry.toLowerCase()} and related sectors, including work with companies like Harley-Davidson and Thor Industries."
-
-OBJECTION HANDLING:
-Objection: "We handle everything internally."
-Response: "That's great — many of our best clients started that way. What we've found is that even companies with strong internal teams benefit from having a specialized partner for peak workloads or niche capabilities like turnkey automation or CAD migration. Would it be helpful to see how other ${company.industry.toLowerCase()} companies have structured this?"
-
-Objection: "We already have an engineering services provider."
-Response: "Understood — and I wouldn't suggest replacing what's working. Many of our clients work with multiple partners for different specializations. Where we really differentiate is in areas like AI vision inspection, AGV/AMR automation, and embedded IoT — areas where deep domain expertise makes a significant difference."
-
-CLOSE:
-"${firstName}, based on what you've shared, I think there could be a strong fit. Would you be open to a 30-minute meeting where I can walk you through 2-3 case studies specifically relevant to ${company.companyName}? I'm available [suggest two specific times]. What works best for you?"`;
-}
-
-// Gemini API call for real mode
+// Gemini API call
 async function callGemini(prompt, apiKey) {
     const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`,
         {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 contents: [{ parts: [{ text: prompt }] }],
                 systemInstruction: { parts: [{ text: TECHNOSOFT_CONTEXT }] },
-                generationConfig: { temperature: 0.7, maxOutputTokens: 2048 }
+                generationConfig: { temperature: 0.7, maxOutputTokens: 8192 }
             })
         }
     );
 
     if (!response.ok) {
-        throw new Error(`Gemini API error: ${response.status}`);
+        const errText = await response.text();
+        throw new Error(`Gemini API error ${response.status}: ${errText}`);
     }
 
     const data = await response.json();
     return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
 }
 
-// Real ZoomInfo search (stub — activate when API key is available)
-async function searchZoomInfo(criteria, apiKey) {
-    // ZoomInfo API integration point
-    // For now, returns empty — mock mode handles this
-    return [];
+// Generate LinkedIn search URL for a contact
+// Constructs a direct LinkedIn search link the BDE can click to find the profile
+function buildLinkedInSearchUrl(firstName, lastName, companyName) {
+    const query = encodeURIComponent(`${firstName} ${lastName} ${companyName}`);
+    return `https://www.linkedin.com/search/results/people/?keywords=${query}`;
 }
 
-// Real Google CSE for LinkedIn (stub — activate when API key is available)
-async function findLinkedIn(firstName, lastName, companyName, apiKey, engineId) {
+// Find LinkedIn profile using Gemini Google Search grounding
+// Uses the same Gemini API key - no separate CSE needed
+async function findLinkedIn(firstName, lastName, companyName, geminiApiKey) {
     try {
-        const query = encodeURIComponent(`${firstName} ${lastName} ${companyName}`);
-        const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${engineId}&q=${query}&siteSearch=linkedin.com/in/`;
-        const response = await fetch(url);
+        const searchPrompt = `I need the exact LinkedIn profile URL for ${firstName} ${lastName} who works at ${companyName}. Search Google for "${firstName} ${lastName} ${companyName} linkedin.com/in" and return ONLY the linkedin.com/in/ URL. If found, return just the URL. If not found, return NOT_FOUND.`;
+        const response = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${geminiApiKey}`,
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: searchPrompt }] }],
+                    tools: [{ google_search: {} }],
+                    generationConfig: { temperature: 0.1, maxOutputTokens: 256 }
+                })
+            }
+        );
+
+        if (!response.ok) {
+            console.error(`Gemini Search grounding error: ${response.status}`);
+            return null;
+        }
+
         const data = await response.json();
-        return data.items?.[0]?.link || null;
-    } catch {
+        const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+        // Check grounding metadata for LinkedIn URLs (may come as redirect URLs)
+        const groundingChunks = data.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
+        for (const chunk of groundingChunks) {
+            const uri = chunk.web?.uri || '';
+            if (uri.includes('linkedin.com/in/')) return uri;
+        }
+
+        // Extract LinkedIn URL from the text response
+        const linkedinMatch = text.match(/https?:\/\/(?:www\.)?linkedin\.com\/in\/[a-zA-Z0-9_-]+\/?/);
+        if (linkedinMatch) return linkedinMatch[0];
+
+        // Fall back to a LinkedIn search URL the BDE can click
+        return null;
+    } catch (err) {
+        console.error('LinkedIn lookup error:', err.message);
         return null;
     }
 }
 
-// Generate outreach content via Gemini for a single contact
+// Generate all outreach content for a single contact via Gemini
 async function generateOutreachContent(contact, geminiKey) {
-    const contactInfo = `Contact: ${contact.firstName} ${contact.lastName}, ${contact.title} at ${contact.companyName}\nIndustry: ${contact.industry}\nRevenue: ${contact.revenue}\nLocation: ${contact.hqLocation}`;
+    const contactInfo = `Contact: ${contact.firstName} ${contact.lastName}, ${contact.title} at ${contact.companyName}
+Industry: ${contact.industry || 'Manufacturing'}
+Revenue: ${contact.revenue || 'Not specified'}
+Location: ${contact.hqLocation || 'Not specified'}
+Employees: ${contact.employees || 'Not specified'}`;
 
-    // Generate research summary
-    const researchPrompt = `Based on the following contact information, generate a 2-3 paragraph research summary about this person and their company, focusing on potential engineering needs and pain points that Technosoft can address:\n\n${contactInfo}\n\nFocus on: recent company news, industry trends, potential automation needs, engineering challenges typical for this industry and company size.`;
-    const researchSummary = await callGemini(researchPrompt, geminiKey);
+    // Single comprehensive prompt to reduce API calls
+    const prompt = `Generate a complete B2B sales outreach package for Technosoft Engineering targeting:
 
-    // Generate connection request
-    const connectionPrompt = `Generate a LinkedIn connection request message (MAXIMUM 200 characters) for:\n${contactInfo}\nContext: ${researchSummary}\nMake it personal, mention something specific about their role or company. Do NOT be generic.`;
-    const connectionRequest = await callGemini(connectionPrompt, geminiKey);
+${contactInfo}
 
-    // Generate InMail
-    const inmailPrompt = `Generate a LinkedIn InMail message (150-200 words) with a subject line for:\n${contactInfo}\nResearch: ${researchSummary}\nInclude: specific reference to their challenges, one Technosoft capability that addresses it, clear CTA for a 15-minute call. Tone: consultative, not pushy.\n\nFormat:\nSUBJECT: [subject line here]\n[body of InMail]`;
-    const inmailRaw = await callGemini(inmailPrompt, geminiKey);
-    const subjectMatch = inmailRaw.match(/SUBJECT:\s*(.+)/i);
-    const inmailSubject = subjectMatch ? subjectMatch[1].trim() : `Engineering Partnership for ${contact.companyName}`;
-    const inmailDraft = inmailRaw.replace(/SUBJECT:\s*.+\n?/i, '').trim();
+Provide ALL of the following in this exact format with the exact section headers shown:
 
-    // Generate cold call script
-    const coldCallPrompt = `Generate a cold calling pitch script for:\n${contactInfo}\nResearch: ${researchSummary}\n\nFormat:\nOPENER (30-45 seconds): Introduction and hook\nQUALIFICATION QUESTIONS (3 questions): Discovery questions about their engineering needs\nTALKING POINTS (3 points): Key Technosoft capabilities relevant to them\nOBJECTION HANDLING (2 common objections with responses)\nCLOSE: Ask for a meeting/next steps`;
-    const coldCallScript = await callGemini(coldCallPrompt, geminiKey);
+===RESEARCH===
+A 2-3 paragraph research summary about this person and their company, focusing on potential engineering needs and pain points Technosoft can address. Include likely industry trends and technology adoption challenges.
+
+===CONNECTION===
+A LinkedIn connection request message (MAXIMUM 200 characters, count carefully). Make it personal and specific to their role/company. Do NOT be generic.
+
+===SUBJECT===
+An InMail subject line (one line only).
+
+===INMAIL===
+A LinkedIn InMail message (150-200 words). Include: specific reference to their challenges, one Technosoft capability that addresses it, clear CTA for a 15-minute call. Tone: consultative, not pushy.
+
+===COLDCALL===
+A complete cold calling script with these sections:
+OPENER (30-45 seconds): Introduction and hook specific to their company
+QUALIFICATION QUESTIONS (3 questions): Discovery questions about their engineering needs
+TALKING POINTS (3 points): Key Technosoft capabilities relevant to them
+OBJECTION HANDLING (2 common objections with responses)
+CLOSE: Ask for a meeting/next steps`;
+
+    const fullResponse = await callGemini(prompt, geminiKey);
+
+    // Parse sections
+    const researchMatch = fullResponse.match(/===RESEARCH===([\s\S]*?)(?====|$)/);
+    const connectionMatch = fullResponse.match(/===CONNECTION===([\s\S]*?)(?====|$)/);
+    const subjectMatch = fullResponse.match(/===SUBJECT===([\s\S]*?)(?====|$)/);
+    const inmailMatch = fullResponse.match(/===INMAIL===([\s\S]*?)(?====|$)/);
+    const coldcallMatch = fullResponse.match(/===COLDCALL===([\s\S]*?)(?====|$)/);
 
     return {
-        researchSummary,
-        connectionRequest: connectionRequest.substring(0, 200),
-        inmailSubject,
-        inmailDraft,
-        coldCallScript
+        researchSummary: (researchMatch ? researchMatch[1].trim() : fullResponse.substring(0, 500)),
+        connectionRequest: (connectionMatch ? connectionMatch[1].trim() : '').substring(0, 200),
+        inmailSubject: subjectMatch ? subjectMatch[1].trim().split('\n')[0] : `Engineering Partnership Opportunity for ${contact.companyName}`,
+        inmailDraft: inmailMatch ? inmailMatch[1].trim() : '',
+        coldCallScript: coldcallMatch ? coldcallMatch[1].trim() : ''
+    };
+}
+
+// Generate mock outreach content (no API calls)
+function generateMockOutreach(contact) {
+    return {
+        researchSummary: `${contact.firstName} ${contact.lastName} serves as ${contact.title} at ${contact.companyName}, a ${contact.revenue || 'significant'} revenue ${(contact.industry || 'manufacturing').toLowerCase()} company headquartered in ${contact.hqLocation || 'the US'} with ${contact.employees || 'significant'} employees globally.\n\n${contact.companyName} has been investing heavily in digital transformation and manufacturing modernization. Recent industry analysis suggests the company is focused on improving operational efficiency, reducing time-to-market for new products, and implementing Industry 4.0 technologies across their facilities.\n\nAs ${contact.title}, ${contact.firstName} likely oversees engineering operations, product development cycles, and technology adoption decisions. Key pain points for leaders in this role typically include managing engineering backlog, accelerating product development timelines, integrating automation and IoT solutions, and maintaining quality standards while scaling operations.`,
+        connectionRequest: `Hi ${contact.firstName}, I noticed ${contact.companyName}'s push into advanced manufacturing. As a ${contact.title}, I'd love to share how we've helped similar firms cut engineering backlogs by 40%.`.substring(0, 200),
+        inmailSubject: `Engineering Partnership Opportunity for ${contact.companyName}`,
+        inmailDraft: `Hi ${contact.firstName},\n\nI hope this message finds you well. I've been following ${contact.companyName}'s impressive growth in the ${(contact.industry || 'manufacturing').toLowerCase()} space, and I wanted to reach out because I believe there's a strong alignment between your engineering priorities and our capabilities at Technosoft Engineering.\n\nMany ${contact.title}s at companies similar to ${contact.companyName} are dealing with growing engineering backlogs, pressure to accelerate time-to-market, and the challenge of scaling technical teams without compromising quality. We've helped manufacturers like Harley-Davidson, Thor Industries, and Illinois Tool Works address exactly these challenges.\n\nWould you be open to a brief 15-minute call next week to explore whether there's a fit?\n\nBest regards`,
+        coldCallScript: `OPENER (30-45 seconds):\n"Hi ${contact.firstName}, this is [Your Name] from Technosoft Engineering. I know I'm calling out of the blue, so I'll be brief. We work with ${(contact.industry || 'manufacturing').toLowerCase()} companies like ${contact.companyName} to help them accelerate product development and reduce engineering costs. Do you have just two minutes?"\n\nQUALIFICATION QUESTIONS:\n1. "How is ${contact.companyName} currently handling peak engineering workloads?"\n2. "What's your biggest bottleneck in getting products from concept to production?"\n3. "Has ${contact.companyName} been exploring automation or Industry 4.0 initiatives?"\n\nTALKING POINTS:\n1. Engineering Capacity: "Our clients typically see a 40% reduction in engineering backlog within the first quarter."\n2. Cost Efficiency: "Our onsite/offshore model delivers Fortune 500 quality at a 30-40% cost reduction."\n3. Domain Expertise: "We've delivered 250+ projects in ${(contact.industry || 'manufacturing').toLowerCase()} and related sectors."\n\nOBJECTION HANDLING:\n"We handle everything internally." -> "Many of our best clients started that way. Even companies with strong internal teams benefit from a specialized partner for peak workloads or niche capabilities."\n"We already have a provider." -> "We don't suggest replacing what's working. Where we differentiate is AI vision inspection, AGV/AMR automation, and embedded IoT."\n\nCLOSE:\n"${contact.firstName}, based on what you've shared, I think there could be a strong fit. Would you be open to a 30-minute meeting where I can walk you through relevant case studies?"`
     };
 }
 
@@ -277,77 +221,132 @@ module.exports = async function handler(req, res) {
     }
 
     try {
-        const criteria = req.body;
-
-        if (!criteria || !criteria.industryPersona) {
-            return res.status(400).json({ error: 'Missing required ICP criteria' });
-        }
-
+        const body = req.body;
+        const mode = body.mode || 'discover';
         const isMockMode = process.env.MOCK_MODE !== 'false';
         const geminiKey = process.env.GEMINI_API_KEY;
-
-        // Mock mode: return realistic mock data immediately
-        if (isMockMode || !geminiKey) {
-            const contacts = getMockContacts(criteria);
-            return res.status(200).json({
-                mock: true,
-                contacts,
-                criteria
-            });
-        }
-
-        // Real mode: use APIs
-        const zoomInfoKey = process.env.ZOOMINFO_API_KEY;
-        const googleCseKey = process.env.GOOGLE_CSE_API_KEY;
-        const googleCseEngine = process.env.GOOGLE_CSE_ENGINE_ID;
+        // Google CSE env vars no longer needed - using Gemini Search grounding instead
 
         let contacts = [];
 
-        // Try ZoomInfo first
-        if (zoomInfoKey) {
-            contacts = await searchZoomInfo(criteria, zoomInfoKey);
+        // ========== UPLOAD MODE: user-provided contacts ==========
+        if (mode === 'upload') {
+            if (!body.contacts || !Array.isArray(body.contacts) || body.contacts.length === 0) {
+                return res.status(400).json({ error: 'No contacts provided in upload' });
+            }
+
+            contacts = body.contacts;
+            const findLinkedIn_flag = body.findLinkedIn || false;
+
+            // Enrich each contact with AI-generated outreach
+            const enrichedContacts = [];
+            for (const contact of contacts) {
+                try {
+                    // Find LinkedIn if requested
+                    if (findLinkedIn_flag && !contact.linkedinUrl) {
+                        if (geminiKey) {
+                            const linkedinUrl = await findLinkedIn(
+                                contact.firstName, contact.lastName, contact.companyName,
+                                geminiKey
+                            );
+                            if (linkedinUrl) contact.linkedinUrl = linkedinUrl;
+                        }
+                        // Always provide a LinkedIn search fallback if no profile found
+                        if (!contact.linkedinUrl) {
+                            contact.linkedinUrl = buildLinkedInSearchUrl(
+                                contact.firstName, contact.lastName, contact.companyName
+                            );
+                            contact.linkedinIsSearch = true;
+                        }
+                    }
+
+                    // Generate outreach content
+                    if (!isMockMode && geminiKey) {
+                        const outreach = await generateOutreachContent(contact, geminiKey);
+                        enrichedContacts.push({ ...contact, ...outreach });
+                    } else {
+                        const outreach = generateMockOutreach(contact);
+                        enrichedContacts.push({ ...contact, ...outreach });
+                    }
+                } catch (err) {
+                    console.error(`Error enriching contact ${contact.firstName} ${contact.lastName}:`, err.message);
+                    // Fall back to mock outreach for this contact
+                    const outreach = generateMockOutreach(contact);
+                    enrichedContacts.push({ ...contact, ...outreach });
+                }
+            }
+
+            return res.status(200).json({
+                mock: isMockMode || !geminiKey,
+                contacts: enrichedContacts,
+                mode: 'upload'
+            });
         }
 
-        // If no ZoomInfo results, fall back to mock contacts but enrich with real AI
+        // ========== DISCOVER MODE: built-in contact database ==========
+        if (!body.industryPersona) {
+            return res.status(400).json({ error: 'Missing required ICP criteria' });
+        }
+
+        // Mock mode: return realistic mock data immediately
+        if (isMockMode || !geminiKey) {
+            contacts = getMockContacts(body);
+            const enriched = contacts.map(c => ({ ...c, ...generateMockOutreach(c) }));
+            return res.status(200).json({ mock: true, contacts: enriched, criteria: body });
+        }
+
+        // Real mode: use built-in contacts + Gemini AI enrichment
+        const zoomInfoKey = process.env.ZOOMINFO_API_KEY;
+
+        // ZoomInfo is optional — skip if not configured
+        if (zoomInfoKey) {
+            // ZoomInfo API integration point (future)
+            // contacts = await searchZoomInfo(body, zoomInfoKey);
+        }
+
+        // Fall back to built-in contacts but enrich with real AI
         if (contacts.length === 0) {
-            contacts = getMockContacts(criteria);
+            contacts = getMockContacts(body);
         }
 
         // Enrich each contact with Gemini-generated content
         const enrichedContacts = [];
         for (const contact of contacts) {
             try {
-                // Find LinkedIn URL if Google CSE is configured
-                if (googleCseKey && googleCseEngine) {
+                // Find LinkedIn URL using Gemini Search grounding
+                if (geminiKey) {
                     const linkedinUrl = await findLinkedIn(
                         contact.firstName, contact.lastName, contact.companyName,
-                        googleCseKey, googleCseEngine
+                        geminiKey
                     );
-                    if (linkedinUrl) {
-                        contact.linkedinUrl = linkedinUrl;
-                    }
+                    if (linkedinUrl) contact.linkedinUrl = linkedinUrl;
+                }
+                // Always provide a LinkedIn search fallback if no direct profile found
+                if (!contact.linkedinUrl) {
+                    contact.linkedinUrl = buildLinkedInSearchUrl(
+                        contact.firstName, contact.lastName, contact.companyName
+                    );
+                    contact.linkedinIsSearch = true;
                 }
 
                 // Generate AI outreach content
                 const outreach = await generateOutreachContent(contact, geminiKey);
-                enrichedContacts.push({
-                    ...contact,
-                    ...outreach
-                });
+                enrichedContacts.push({ ...contact, ...outreach });
             } catch (err) {
-                console.error(`Error enriching contact ${contact.firstName} ${contact.lastName}:`, err);
-                enrichedContacts.push(contact);
+                console.error(`Error enriching contact ${contact.firstName} ${contact.lastName}:`, err.message);
+                const outreach = generateMockOutreach(contact);
+                enrichedContacts.push({ ...contact, ...outreach });
             }
         }
 
         return res.status(200).json({
             mock: false,
             contacts: enrichedContacts,
-            criteria
+            criteria: body
         });
 
     } catch (error) {
         console.error('Outreach generation error:', error);
-        return res.status(500).json({ error: 'Failed to generate outreach playbook' });
+        return res.status(500).json({ error: 'Failed to generate outreach playbook: ' + error.message });
     }
 };
