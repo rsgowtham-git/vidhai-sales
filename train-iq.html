@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="en">
+<script>document.documentElement.setAttribute('data-theme',window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light')</script>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TrainIQ — Find Your Perfect AI Learning Path | Vidhai</title>
+<meta name="description" content="TrainIQ by Vidhai discovers your AI readiness and recommends the right free or paid training courses for your role, goals, and schedule.">
+<link rel="canonical" href="https://www.vidhai.co/train-iq.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="./base.css">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Inter:wght@300;400;500;600&display=swap');
+:root{
+  --text-xs:clamp(0.75rem,0.7rem + 0.25vw,0.8125rem);
+  --text-sm:clamp(0.875rem,0.8rem + 0.35vw,0.9375rem);
+  --text-base:clamp(1rem,0.9rem + 0.5vw,1.0625rem);
+  --text-lg:clamp(1.125rem,0.95rem + 0.85vw,1.375rem);
+  --text-xl:clamp(1.5rem,1rem + 1.5vw,2rem);
+  --space-1:.25rem;--space-2:.5rem;--space-3:.75rem;--space-4:1rem;
+  --space-5:1.25rem;--space-6:1.5rem;--space-8:2rem;--space-10:2.5rem;
+  --space-12:3rem;--space-16:4rem;--space-20:5rem;
+  --radius-sm:.375rem;--radius-md:.5rem;--radius-lg:.75rem;
+  --radius-xl:1rem;--radius-full:9999px;
+  --font-display:'DM Sans',system-ui,sans-serif;
+  --font-body:'Inter',system-ui,sans-serif;
+  --transition:180ms cubic-bezier(0.16,1,0.3,1);
+}
+:root,[data-theme="dark"]{
+  --color-bg:#0f172a;--color-surface:#1e293b;--color-surface-2:#1a2332;
+  --color-border:rgba(148,163,184,0.15);--color-divider:rgba(148,163,184,0.12);
+  --color-text:#e2e8f0;--color-text-muted:#94a3b8;--color-text-faint:#64748b;
+  --color-primary:#2dd4bf;--color-primary-hover:#14b8a6;
+  --color-primary-muted:rgba(45,212,191,0.12);
+  --color-primary-highlight:rgba(45,212,191,0.08);
+  --color-accent-blue:#38bdf8;--color-accent-amber:#fbbf24;
+  --color-accent-rose:#fb7185;--color-accent-violet:#a78bfa;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.3);--shadow-md:0 4px 12px rgba(0,0,0,.4);
+  --shadow-lg:0 12px 32px rgba(0,0,0,.5);
+}
+[data-theme="light"]{
+  --color-bg:#f8fafc;--color-surface:#ffffff;--color-surface-2:#f1f5f9;
+  --color-border:rgba(15,23,42,0.12);--color-divider:rgba(15,23,42,0.08);
+  --color-text:#0f172a;--color-text-muted:#475569;--color-text-faint:#94a3b8;
+  --color-primary:#0d9488;--color-primary-hover:#0f766e;
+  --color-primary-muted:rgba(13,148,136,0.1);
+  --color-primary-highlight:rgba(13,148,136,0.06);
+  --color-accent-blue:#0284c7;--color-accent-amber:#d97706;
+  --color-accent-rose:#e11d48;--color-accent-violet:#7c3aed;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.06);--shadow-md:0 4px 12px rgba(0,0,0,.08);
+  --shadow-lg:0 12px 32px rgba(0,0,0,.12);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);color:var(--color-text);background:var(--color-bg);min-height:100dvh;-webkit-font-smoothing:antialiased}
+a{color:var(--color-primary);text-decoration:none}
+a:hover{text-decoration:underline}
+button{cursor:pointer;font:inherit}
+
+/* Nav */
+.nav{position:sticky;top:0;z-index:100;background:var(--color-bg);border-bottom:1px solid var(--color-border);backdrop-filter:blur(8px)}
+.nav__inner{max-width:1200px;margin:0 auto;padding:0 var(--space-6);height:60px;display:flex;align-items:center;justify-content:space-between;gap:var(--space-4)}
+.nav__logo{display:flex;align-items:center;gap:var(--space-2);font-family:var(--font-display);font-weight:700;font-size:var(--text-lg);color:var(--color-text);text-decoration:none}
+.nav__logo svg{width:26px;height:26px;color:var(--color-primary)}
+.nav__badge{font-size:var(--text-xs);font-weight:600;background:var(--color-primary-muted);color:var(--color-primary);padding:2px 8px;border-radius:var(--radius-full);border:1px solid var(--color-primary);opacity:.85}
+.nav__actions{display:flex;align-items:center;gap:var(--space-3)}
+.theme-toggle{background:none;border:1px solid var(--color-border);border-radius:var(--radius-md);padding:6px;color:var(--color-text-muted);display:flex;align-items:center;justify-content:center;transition:var(--transition)}
+.theme-toggle:hover{color:var(--color-primary);border-color:var(--color-primary)}
+.nav__back{font-size:var(--text-sm);color:var(--color-text-muted);display:flex;align-items:center;gap:var(--space-1);background:none;border:none;padding:6px 10px;border-radius:var(--radius-md);transition:var(--transition)}
+.nav__back:hover{color:var(--color-primary);background:var(--color-primary-highlight)}
+
+/* Layout */
+.trainiq-main{max-width:720px;margin:0 auto;padding:var(--space-10) var(--space-6) var(--space-20)}
+
+/* Progress */
+.progress-bar-wrap{margin-bottom:var(--space-10)}
+.progress-bar-track{height:4px;background:var(--color-border);border-radius:var(--radius-full);overflow:hidden}
+.progress-bar-fill{height:100%;background:var(--color-primary);border-radius:var(--radius-full);transition:width .5s cubic-bezier(0.16,1,0.3,1)}
+.progress-labels{display:flex;justify-content:space-between;margin-top:var(--space-2)}
+.progress-label{font-size:var(--text-xs);color:var(--color-text-faint);transition:color .3s}
+.progress-label.active{color:var(--color-primary);font-weight:600}
+.progress-label.done{color:var(--color-text-muted)}
+
+/* Step card */
+.step-card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-xl);padding:var(--space-10) var(--space-8);box-shadow:var(--shadow-md);animation:fadeSlideUp .35s ease both}
+@keyframes fadeSlideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.step-icon{width:52px;height:52px;border-radius:var(--radius-lg);background:var(--color-primary-muted);display:flex;align-items:center;justify-content:center;margin-bottom:var(--space-5);color:var(--color-primary)}
+.step-icon svg{width:26px;height:26px}
+.step-title{font-family:var(--font-display);font-size:var(--text-xl);font-weight:700;margin-bottom:var(--space-2);color:var(--color-text);line-height:1.2}
+.step-subtitle{font-size:var(--text-sm);color:var(--color-text-muted);margin-bottom:var(--space-8);max-width:52ch}
+
+/* Returning user banner */
+.returning-banner{background:linear-gradient(135deg,var(--color-primary-muted),var(--color-primary-highlight));border:1px solid var(--color-primary);border-radius:var(--radius-lg);padding:var(--space-4) var(--space-5);margin-bottom:var(--space-6);display:flex;align-items:flex-start;gap:var(--space-3)}
+.returning-banner-icon{font-size:1.4rem;flex-shrink:0;margin-top:2px}
+.returning-banner-text strong{display:block;font-size:var(--text-sm);font-weight:600;color:var(--color-primary);margin-bottom:2px}
+.returning-banner-text span{font-size:var(--text-xs);color:var(--color-text-muted)}
+.returning-banner-text .improvement{color:#22c55e;font-weight:600}
+.returning-banner-text .regressed{color:var(--color-accent-rose);font-weight:600}
+
+/* Form elements */
+.field{margin-bottom:var(--space-6)}
+.field label{display:block;font-size:var(--text-sm);font-weight:500;color:var(--color-text-muted);margin-bottom:var(--space-2)}
+.input,.select,.textarea{width:100%;background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:var(--space-3) var(--space-4);color:var(--color-text);font-size:var(--text-sm);font-family:var(--font-body);transition:border-color .2s,box-shadow .2s;outline:none}
+.input:focus,.select:focus,.textarea:focus{border-color:var(--color-primary);box-shadow:0 0 0 3px var(--color-primary-muted)}
+.select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:var(--space-8)}
+.input-row{display:flex;gap:var(--space-3);align-items:flex-start}
+.input-row .input{flex:1}
+
+/* Chips */
+.chip-grid{display:flex;flex-wrap:wrap;gap:var(--space-2)}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:var(--space-2) var(--space-4);border:1px solid var(--color-border);border-radius:var(--radius-full);font-size:var(--text-sm);background:transparent;color:var(--color-text-muted);cursor:pointer;transition:all .2s;user-select:none}
+.chip:hover{border-color:var(--color-primary);color:var(--color-primary);background:var(--color-primary-highlight)}
+.chip.selected{border-color:var(--color-primary);color:var(--color-primary);background:var(--color-primary-muted);font-weight:500}
+.chip .chip-check{width:14px;height:14px;opacity:0;transition:.15s}
+.chip.selected .chip-check{opacity:1}
+
+/* Option cards */
+.option-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-3)}
+@media(max-width:480px){.option-grid{grid-template-columns:1fr}}
+.option-card{border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-4) var(--space-5);cursor:pointer;transition:all .2s;background:transparent}
+.option-card:hover{border-color:var(--color-primary);background:var(--color-primary-highlight)}
+.option-card.selected{border-color:var(--color-primary);background:var(--color-primary-muted)}
+.option-card.selected .option-title{color:var(--color-primary)}
+.option-title{font-size:var(--text-sm);font-weight:600;color:var(--color-text);margin-bottom:2px}
+.option-desc{font-size:var(--text-xs);color:var(--color-text-muted)}
+
+/* Slider */
+.slider-wrap{margin-top:var(--space-2)}
+.slider{width:100%;accent-color:var(--color-primary);height:4px}
+.slider-labels{display:flex;justify-content:space-between;font-size:var(--text-xs);color:var(--color-text-faint);margin-top:var(--space-1)}
+.slider-value{display:inline-block;font-size:var(--text-sm);font-weight:600;color:var(--color-primary);margin-top:var(--space-1)}
+
+/* Time picker */
+.time-picker-wrap{background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-5);margin-bottom:var(--space-4)}
+.time-picker-row{display:flex;align-items:center;gap:var(--space-4);flex-wrap:wrap;margin-bottom:var(--space-4)}
+.time-picker-label{font-size:var(--text-sm);color:var(--color-text-muted);font-weight:500;min-width:80px}
+.time-input{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:var(--space-2) var(--space-3);color:var(--color-text);font-size:var(--text-sm);font-family:var(--font-body);cursor:pointer;outline:none;transition:border-color .2s}
+.time-input:focus{border-color:var(--color-primary);box-shadow:0 0 0 3px var(--color-primary-muted)}
+.days-row{display:flex;gap:var(--space-2);flex-wrap:wrap}
+.day-chip{width:38px;height:38px;border-radius:50%;border:1px solid var(--color-border);display:flex;align-items:center;justify-content:center;font-size:var(--text-xs);font-weight:600;cursor:pointer;transition:all .2s;background:transparent;color:var(--color-text-muted)}
+.day-chip:hover{border-color:var(--color-primary);color:var(--color-primary)}
+.day-chip.selected{background:var(--color-primary);border-color:var(--color-primary);color:#0f172a}
+.reminder-summary{font-size:var(--text-xs);color:var(--color-primary);margin-top:var(--space-3);font-weight:500;min-height:16px}
+
+/* Reminder checkbox */
+.reminder-opt{display:flex;align-items:flex-start;gap:var(--space-3);padding:var(--space-4) var(--space-5);background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-lg);cursor:pointer;transition:border-color .2s}
+.reminder-opt:hover{border-color:var(--color-primary)}
+.reminder-opt input[type=checkbox]{width:16px;height:16px;accent-color:var(--color-primary);flex-shrink:0;margin-top:2px;cursor:pointer}
+.reminder-opt-text strong{display:block;font-size:var(--text-sm);font-weight:600;margin-bottom:2px}
+.reminder-opt-text span{font-size:var(--text-xs);color:var(--color-text-muted)}
+
+/* Calendar toggle */
+.cal-toggle-wrap{background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-5);display:flex;align-items:center;justify-content:space-between;gap:var(--space-4)}
+.toggle{position:relative;display:inline-block;width:44px;height:24px}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;background:var(--color-border);border-radius:var(--radius-full);cursor:pointer;transition:.3s}
+.toggle-slider::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.3s}
+input:checked+.toggle-slider{background:var(--color-primary)}
+input:checked+.toggle-slider::before{transform:translateX(20px)}
+.cal-steps{background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-5);margin-top:var(--space-3);display:none;animation:fadeSlideUp .25s ease}
+.cal-steps.show{display:block}
+.cal-step-item{display:flex;gap:var(--space-3);align-items:flex-start;margin-bottom:var(--space-3)}
+.cal-step-item:last-child{margin-bottom:0}
+.cal-step-num{width:22px;height:22px;border-radius:50%;background:var(--color-primary-muted);border:1px solid var(--color-primary);color:var(--color-primary);font-size:var(--text-xs);font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.cal-step-text{font-size:var(--text-xs);color:var(--color-text-muted);line-height:1.6}
+.cal-step-text a{color:var(--color-primary);font-weight:500}
+.cal-step-text code{background:var(--color-surface);padding:1px 5px;border-radius:3px;font-size:0.9em;font-family:monospace}
+.cal-status{font-size:var(--text-xs);margin-top:var(--space-3);padding:var(--space-2) var(--space-3);border-radius:var(--radius-md);display:none}
+.cal-status.connected{display:block;background:rgba(45,212,191,.1);color:var(--color-primary);border:1px solid var(--color-primary)}
+.cal-status.error{display:block;background:rgba(251,113,133,.1);color:var(--color-accent-rose);border:1px solid var(--color-accent-rose)}
+.cal-client-id-row{display:flex;gap:var(--space-2);align-items:center;margin-top:var(--space-3)}
+.cal-client-id-row .input{font-size:var(--text-xs);padding:var(--space-2) var(--space-3)}
+.btn-cal-connect{font-size:var(--text-xs);font-weight:600;padding:var(--space-2) var(--space-4);background:var(--color-primary);color:#0f172a;border:none;border-radius:var(--radius-md);cursor:pointer;white-space:nowrap;transition:background .2s;flex-shrink:0}
+.btn-cal-connect:hover{background:var(--color-primary-hover)}
+
+/* Quiz */
+.quiz-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-6)}
+.quiz-counter{font-size:var(--text-xs);font-weight:600;color:var(--color-text-muted)}
+.quiz-level{font-size:var(--text-xs);padding:2px 8px;border-radius:var(--radius-full)}
+.quiz-level.level-1{background:rgba(45,212,191,.12);color:var(--color-primary)}
+.quiz-level.level-2{background:rgba(251,191,36,.12);color:var(--color-accent-amber)}
+.quiz-level.level-3{background:rgba(167,139,250,.12);color:var(--color-accent-violet)}
+.quiz-q-track{height:3px;background:var(--color-border);border-radius:var(--radius-full);margin-bottom:var(--space-6);overflow:hidden}
+.quiz-q-fill{height:100%;background:var(--color-primary);border-radius:var(--radius-full);transition:width .4s cubic-bezier(0.16,1,0.3,1)}
+.quiz-question{font-size:var(--text-lg);font-weight:600;font-family:var(--font-display);margin-bottom:var(--space-6);line-height:1.35;color:var(--color-text)}
+.quiz-options{display:flex;flex-direction:column;gap:var(--space-3)}
+.quiz-option{padding:var(--space-4) var(--space-5);border:1px solid var(--color-border);border-radius:var(--radius-lg);cursor:pointer;font-size:var(--text-sm);color:var(--color-text-muted);transition:all .2s;background:transparent;text-align:left;display:flex;align-items:center;gap:var(--space-3)}
+.quiz-option:hover:not(:disabled){border-color:var(--color-primary);color:var(--color-text);background:var(--color-primary-highlight)}
+.quiz-option:disabled{cursor:default}
+.quiz-option.correct{border-color:#22c55e;background:rgba(34,197,94,.1);color:#22c55e;font-weight:500}
+.quiz-option.wrong{border-color:var(--color-accent-rose);background:rgba(251,113,133,.1);color:var(--color-accent-rose)}
+.quiz-opt-letter{width:26px;height:26px;border-radius:var(--radius-full);background:var(--color-border);display:flex;align-items:center;justify-content:center;font-size:var(--text-xs);font-weight:700;flex-shrink:0;transition:all .2s}
+.quiz-option.correct .quiz-opt-letter{background:#22c55e;color:#fff}
+.quiz-option.wrong .quiz-opt-letter{background:var(--color-accent-rose);color:#fff}
+.quiz-feedback{margin-top:var(--space-4);padding:var(--space-3) var(--space-4);border-radius:var(--radius-md);font-size:var(--text-sm);display:none}
+.quiz-feedback.show{display:block;animation:fadeSlideUp .25s ease}
+.quiz-feedback.correct{background:rgba(34,197,94,.1);color:#22c55e;border:1px solid rgba(34,197,94,.2)}
+.quiz-feedback.wrong{background:rgba(251,113,133,.1);color:var(--color-accent-rose);border:1px solid rgba(251,113,133,.2)}
+.quiz-next-btn{margin-top:var(--space-5);width:100%;padding:var(--space-3) var(--space-6);background:var(--color-primary);color:#0f172a;border:none;border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:600;cursor:pointer;display:none;transition:background .2s}
+.quiz-next-btn.show{display:block;animation:fadeSlideUp .25s ease}
+.quiz-next-btn:hover{background:var(--color-primary-hover)}
+
+/* Results */
+.classification-badge{display:inline-flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-5);border-radius:var(--radius-full);font-size:var(--text-base);font-weight:700;margin-bottom:var(--space-6);letter-spacing:-.01em}
+.classification-badge.beginner{background:rgba(45,212,191,.15);color:var(--color-primary);border:1px solid var(--color-primary)}
+.classification-badge.informed{background:rgba(251,191,36,.12);color:var(--color-accent-amber);border:1px solid var(--color-accent-amber)}
+.classification-badge.advanced{background:rgba(167,139,250,.12);color:var(--color-accent-violet);border:1px solid var(--color-accent-violet)}
+.score-bar{background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-5);margin-bottom:var(--space-6)}
+.score-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-3)}
+.score-label{font-size:var(--text-sm);color:var(--color-text-muted)}
+.score-num{font-size:var(--text-lg);font-weight:700;color:var(--color-primary);font-family:var(--font-display)}
+.score-track{height:8px;background:var(--color-border);border-radius:var(--radius-full);overflow:hidden}
+.score-fill{height:100%;background:linear-gradient(90deg,var(--color-primary),var(--color-accent-blue));border-radius:var(--radius-full);transition:width 1s cubic-bezier(0.16,1,0.3,1)}
+.score-delta{font-size:var(--text-xs);margin-top:var(--space-2);padding:var(--space-1) var(--space-3);border-radius:var(--radius-full);display:inline-block}
+.score-delta.up{background:rgba(34,197,94,.12);color:#22c55e}
+.score-delta.same{background:var(--color-surface-2);color:var(--color-text-muted)}
+.score-delta.down{background:rgba(251,113,133,.1);color:var(--color-accent-rose)}
+
+/* Course cards */
+.courses-section-title{font-size:var(--text-sm);font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:var(--space-4);display:flex;align-items:center;gap:var(--space-2)}
+.courses-section-title::after{content:'';flex:1;height:1px;background:var(--color-divider)}
+.course-cards{display:flex;flex-direction:column;gap:var(--space-3);margin-bottom:var(--space-8)}
+.course-card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-5);cursor:pointer;transition:all .2s;position:relative}
+.course-card:hover{border-color:var(--color-primary);box-shadow:var(--shadow-md)}
+.course-card.selected{border-color:var(--color-primary);background:var(--color-primary-highlight)}
+.course-card-header{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--space-3);margin-bottom:var(--space-2)}
+.course-card-title{font-size:var(--text-sm);font-weight:600;color:var(--color-text);line-height:1.3}
+.course-card-check{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--color-border);background:transparent;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.course-card.selected .course-card-check{background:var(--color-primary);border-color:var(--color-primary)}
+.course-card-provider{font-size:var(--text-xs);color:var(--color-text-muted);margin-bottom:var(--space-2)}
+.course-card-desc{font-size:var(--text-xs);color:var(--color-text-muted);line-height:1.55;margin-bottom:var(--space-3)}
+.course-card-meta{display:flex;flex-wrap:wrap;gap:var(--space-2);align-items:center}
+.tag{font-size:var(--text-xs);padding:2px 8px;border-radius:var(--radius-full);font-weight:500}
+.tag-free{background:rgba(34,197,94,.12);color:#22c55e}
+.tag-paid{background:rgba(251,191,36,.1);color:var(--color-accent-amber)}
+.tag-level{background:var(--color-primary-muted);color:var(--color-primary)}
+.tag-duration{background:var(--color-surface-2);color:var(--color-text-muted)}
+.course-card-enroll{margin-top:var(--space-3)}
+.btn-enroll{font-size:var(--text-xs);font-weight:600;padding:5px 12px;border-radius:var(--radius-md);background:var(--color-primary);color:#0f172a;border:none;cursor:pointer;transition:background .2s;text-decoration:none;display:inline-block}
+.btn-enroll:hover{background:var(--color-primary-hover);text-decoration:none}
+
+/* Calendar plan */
+.cal-plan{background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-6);margin-bottom:var(--space-6)}
+.cal-plan-title{font-size:var(--text-sm);font-weight:600;margin-bottom:var(--space-4);display:flex;align-items:center;gap:var(--space-2)}
+.cal-course-row{display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);padding:var(--space-3) 0;border-bottom:1px solid var(--color-divider)}
+.cal-course-row:last-child{border-bottom:none;padding-bottom:0}
+.cal-course-name{font-size:var(--text-xs);font-weight:500;color:var(--color-text);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cal-date-input{font-size:var(--text-xs);background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:4px 8px;color:var(--color-text);cursor:pointer;outline:none}
+.cal-date-input:focus{border-color:var(--color-primary)}
+.cal-add-btn{font-size:var(--text-xs);padding:4px 10px;background:var(--color-primary-muted);color:var(--color-primary);border:1px solid var(--color-primary);border-radius:var(--radius-sm);cursor:pointer;white-space:nowrap;transition:background .2s}
+.cal-add-btn:hover{background:var(--color-primary);color:#0f172a}
+.cal-add-btn.added{background:rgba(34,197,94,.1);color:#22c55e;border-color:#22c55e;cursor:default}
+
+/* Nav buttons */
+.step-nav{display:flex;justify-content:space-between;align-items:center;margin-top:var(--space-8);gap:var(--space-3)}
+.btn-back{font-size:var(--text-sm);padding:var(--space-3) var(--space-5);border:1px solid var(--color-border);border-radius:var(--radius-md);background:transparent;color:var(--color-text-muted);transition:all .2s}
+.btn-back:hover{border-color:var(--color-primary);color:var(--color-primary)}
+.btn-next{font-size:var(--text-sm);font-weight:600;padding:var(--space-3) var(--space-6);background:var(--color-primary);color:#0f172a;border:none;border-radius:var(--radius-md);transition:background .2s;display:flex;align-items:center;gap:var(--space-2)}
+.btn-next:hover:not(:disabled){background:var(--color-primary-hover)}
+.btn-next:disabled{opacity:.45;cursor:not-allowed}
+.btn-next svg,.btn-back svg{width:16px;height:16px;flex-shrink:0}
+
+/* Welcome features */
+.welcome-features{display:flex;flex-direction:column;gap:var(--space-3);margin:var(--space-6) 0}
+.welcome-feat{display:flex;align-items:flex-start;gap:var(--space-3)}
+.welcome-feat-icon{width:32px;height:32px;border-radius:var(--radius-md);background:var(--color-primary-muted);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.welcome-feat-icon svg{width:16px;height:16px;color:var(--color-primary)}
+.welcome-feat-text strong{display:block;font-size:var(--text-sm);font-weight:600;margin-bottom:1px}
+.welcome-feat-text span{font-size:var(--text-xs);color:var(--color-text-muted)}
+
+/* Complete */
+.complete-banner{background:linear-gradient(135deg,var(--color-primary-muted),var(--color-primary-highlight));border:1px solid var(--color-primary);border-radius:var(--radius-xl);padding:var(--space-8);text-align:center;margin-bottom:var(--space-6)}
+.complete-banner h2{font-family:var(--font-display);font-size:var(--text-xl);font-weight:700;margin-bottom:var(--space-2)}
+.complete-banner p{font-size:var(--text-sm);color:var(--color-text-muted)}
+.share-row{display:flex;justify-content:center;gap:var(--space-3);margin-top:var(--space-5);flex-wrap:wrap}
+.btn-share{font-size:var(--text-sm);font-weight:600;padding:var(--space-3) var(--space-5);border-radius:var(--radius-md);border:none;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:var(--space-2);text-decoration:none}
+.btn-share.primary{background:var(--color-primary);color:#0f172a}
+.btn-share.secondary{background:var(--color-surface-2);color:var(--color-text);border:1px solid var(--color-border)}
+.btn-share:hover{opacity:.88}
+.affiliate-notice{font-size:var(--text-xs);color:var(--color-text-faint);text-align:center;margin-top:var(--space-4);padding:var(--space-3);background:var(--color-surface-2);border-radius:var(--radius-md)}
+@media(max-width:600px){
+  .trainiq-main{padding:var(--space-6) var(--space-4) var(--space-16)}
+  .step-card{padding:var(--space-6) var(--space-5)}
+  .progress-labels{display:none}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav__inner">
+    <a href="/" class="nav__logo">
+      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 28V16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <path d="M16 16c0-5 3-8 7-9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <path d="M16 18c0-4-3-7-6-8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+        <ellipse cx="16" cy="28" rx="3" ry="1.5" fill="currentColor" opacity="0.3"/>
+        <circle cx="23" cy="7" r="1.5" fill="currentColor"/>
+        <circle cx="10" cy="10" r="1" fill="currentColor" opacity="0.5"/>
+      </svg>
+      <span>Vidhai</span>
+    </a>
+    <span class="nav__badge">TrainIQ</span>
+    <div class="nav__actions">
+      <button class="theme-toggle" data-theme-toggle>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      </button>
+      <a href="/" class="nav__back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="14" height="14"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+        Back to Vidhai
+      </a>
+    </div>
+  </div>
+</nav>
+
+<main class="trainiq-main">
+  <div class="progress-bar-wrap" id="progress-wrap" style="display:none">
+    <div class="progress-bar-track">
+      <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+    <div class="progress-labels">
+      <span class="progress-label" data-step="1">Profile</span>
+      <span class="progress-label" data-step="2">Goals</span>
+      <span class="progress-label" data-step="3">Schedule</span>
+      <span class="progress-label" data-step="4">Quiz</span>
+      <span class="progress-label" data-step="5">Results</span>
+      <span class="progress-label" data-step="6">Plan</span>
+    </div>
+  </div>
+  <div id="step-container"></div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* =====================================================
+   CONFIG
+===================================================== */
+const SB_URL  = 'https://wyuzksjbbgwvzxzmhpge.supabase.co';
+const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5dXprc2piYmd3dnp4em1ocGdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3NDkyNDcsImV4cCI6MjA4ODMyNTI0N30.Ia1CfW_4TRmXuz2LM53oj0oHJK5TBcHOuDUUcwoCAd8';
+const sb = supabase.createClient(SB_URL, SB_ANON);
+
+// Replace with your real affiliate IDs from impact.com (Coursera) and Rakuten (Udemy)
+const AFFILIATE = { coursera_id: 'YOUR_COURSERA_ID', udemy_id: 'YOUR_UDEMY_ID' };
+
+function affiliateUrl(c) {
+  const base = c.enroll_url || '#';
+  const utm  = 'utm_source=vidhai&utm_medium=trainiq&utm_campaign=recommendation';
+  if (base.includes('coursera.org') && !AFFILIATE.coursera_id.startsWith('YOUR'))
+    return `https://imp.i384100.net/c/${AFFILIATE.coursera_id}/1348616/14726?u=${encodeURIComponent(base+'?'+utm)}`;
+  if (base.includes('udemy.com') && !AFFILIATE.udemy_id.startsWith('YOUR'))
+    return `https://click.linksynergy.com/deeplink?id=${AFFILIATE.udemy_id}&mid=39197&murl=${encodeURIComponent(base)}`;
+  return base + (base.includes('?')?'&':'?') + utm;
+}
+
+/* =====================================================
+   STATE
+===================================================== */
+const state = {
+  step:0, role:'', objectives:[], budget:'', timeline:'',
+  hoursPerWeek:5, studyTime:'07:00', studyDays:['Mon','Wed','Fri'],
+  email:'', reminderEnabled:false,
+  hasCalendar:false, calClientId:'', calToken:null,
+  quizAnswers:[], quizScore:0, classification:'',
+  courses:[], recommended:[], selected:[],
+  sessionId: crypto.randomUUID(), dbId:null,
+  prevSession:null,  // previous attempt data
+};
+
+// Shuffled question bank — re-shuffled on each quiz start
+let SHUFFLED_QUIZ = [];
+
+/* =====================================================
+   STATIC DATA
+===================================================== */
+const ROLES = ['Business Professional / Manager','Marketing & Sales','Engineer / Developer',
+  'Product Manager','Data Analyst','HR / Operations','Healthcare Professional',
+  'Finance / Accounting','Student','Entrepreneur / Founder','Other'];
+
+const OBJECTIVES = [
+  {id:'basics', label:'Understand AI basics & terminology'},
+  {id:'daily',  label:'Use AI tools in my daily work'},
+  {id:'build',  label:'Build AI-powered applications'},
+  {id:'lead',   label:'Lead AI strategy & transformation'},
+  {id:'career', label:'Transition into an AI / ML role'},
+  {id:'team',   label:'Upskill my team in AI'},
+  {id:'research',label:'AI research & deep learning'},
+];
+
+const BUDGETS = [
+  {id:'free',   title:'🆓 Free only',       desc:'$0 — no credit card needed'},
+  {id:'low',    title:'💸 Low budget',       desc:'Up to $50 one-time'},
+  {id:'medium', title:'📚 Medium budget',    desc:'$50 – $200'},
+  {id:'open',   title:'🚀 Flexible',         desc:'$200+ or subscription'},
+];
+
+const TIMELINES = [
+  {id:'asap', title:'⚡ ASAP',          desc:'1–2 weeks'},
+  {id:'1mo',  title:'📅 1 Month',       desc:'Structured 30-day plan'},
+  {id:'3mo',  title:'📈 3 Months',      desc:'Deep skill building'},
+  {id:'6mo',  title:'🎓 6 Months',      desc:'Full learning journey'},
+  {id:'flex', title:'🧘 Self-paced',    desc:'No fixed deadline'},
+];
+
+const DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+
+/* =====================================================
+   QUIZ — 15 questions with shuffled options per run
+===================================================== */
+const RAW_QUIZ = [
+  // ── LEVEL 1 — Basic Awareness ──
+  // Rule: all options same ballpark length; correct answer is NOT always longest;
+  // wrong answers are real misconceptions, not obviously absurd.
+  {
+    level: 1,
+    q: 'Which of these is NOT powered by AI?',
+    opts: [
+      'A spreadsheet formula summing a column of numbers',
+      'Netflix recommending shows based on your watch history',
+      'A spam filter sorting unwanted emails automatically',
+      'Your phone unlocking by recognising your face',
+    ],
+    answer: 0,
+    explanation: 'A spreadsheet SUM formula is simple arithmetic — no learning involved. The other three all use machine learning models under the hood.',
+  },
+  {
+    level: 1,
+    q: 'Which company built ChatGPT?',
+    opts: ['Google', 'Microsoft', 'OpenAI', 'Meta'],
+    answer: 2,
+    explanation: 'ChatGPT was built by OpenAI. Microsoft is a major investor and uses the technology in Copilot, but OpenAI created the model.',
+  },
+  {
+    level: 1,
+    q: 'A neural network is described as "inspired by the brain." What does that actually mean?',
+    opts: [
+      'It is built from biological neurons extracted from lab tissue',
+      'It stores memories the same way humans remember past events',
+      'It is made of connected layers of nodes that pass weighted signals',
+      'It physically mimics the shape and layout of the human cortex',
+    ],
+    answer: 2,
+    explanation: 'Neural networks are mathematical models made of connected nodes (not biological tissue). The "brain-inspired" part refers to the layered, weighted signal structure — not the biology.',
+  },
+  {
+    level: 1,
+    q: 'What does "generative AI" refer to?',
+    opts: [
+      'AI that spots patterns in existing data to classify or predict',
+      'AI that automates repetitive tasks like data entry or scheduling',
+      'AI that creates new content — text, images, audio, or code',
+      'AI that controls physical robots and automated machinery',
+    ],
+    answer: 2,
+    explanation: 'Generative AI produces new content rather than just classifying or predicting. Tools like ChatGPT, Midjourney, and Suno are all generative.',
+  },
+  {
+    level: 1,
+    q: 'An AI scores 99% accuracy on its test data. Does that mean it\'s ready to deploy?',
+    opts: [
+      'Yes — 99% is well above the industry standard of 95%',
+      'Not necessarily — the test data may not reflect real-world conditions',
+      'Yes — accuracy is the definitive measure of AI readiness',
+      'Not necessarily — it needs to reach 100% first',
+    ],
+    answer: 1,
+    explanation: 'High accuracy on test data can be misleading if the data is not representative. A model can overfit, be biased, or fail on edge cases not covered in testing.',
+  },
+
+  // ── LEVEL 2 — Informed ──
+  {
+    level: 2,
+    q: 'What is "model training" in the context of AI?',
+    opts: [
+      'Running the model live to answer user questions in production',
+      'The process where the model adjusts its parameters by learning from data',
+      'Writing and testing the code that powers the AI application',
+      'Updating the model\'s user interface and response style',
+    ],
+    answer: 1,
+    explanation: 'Training is when the model iterates over data and adjusts its internal weights to minimise errors. Running it to answer questions is called "inference."',
+  },
+  {
+    level: 2,
+    q: 'What is "prompt engineering" in plain terms?',
+    opts: [
+      'Building the physical servers that host AI models',
+      'Crafting inputs carefully to get better AI outputs',
+      'Writing backend code that connects AI to databases',
+      'Designing the chat interface users interact with',
+    ],
+    answer: 1,
+    explanation: 'Prompt engineering means structuring your questions or instructions to guide the AI toward more accurate, useful, or consistent responses.',
+  },
+  {
+    level: 2,
+    q: 'RAG stands for Retrieval-Augmented Generation. What problem does it solve?',
+    opts: [
+      'It makes models run faster by caching repeated answers',
+      'It lets models access current or private information they were not trained on',
+      'It reduces the cost of calling large AI APIs per request',
+      'It translates AI responses into multiple languages automatically',
+    ],
+    answer: 1,
+    explanation: 'LLMs are trained on fixed data and can go out of date. RAG retrieves relevant documents at query time and feeds them to the model, grounding it in fresh or private information.',
+  },
+  {
+    level: 2,
+    q: 'An AI confidently gives you a wrong answer stated as fact. What is this called?',
+    opts: ['Overfitting', 'Bias', 'Hallucination', 'Underfitting'],
+    answer: 2,
+    explanation: '"Hallucination" is when an AI generates plausible-sounding but factually incorrect information. It\'s a well-known failure mode of large language models.',
+  },
+  {
+    level: 2,
+    q: 'You want to classify customer emails as "complaint" or "not complaint." Which learning type fits best?',
+    opts: [
+      'Unsupervised — the model groups emails by similarity on its own',
+      'Reinforcement — the model learns from customer feedback over time',
+      'Supervised — the model trains on emails already labelled by humans',
+      'Self-supervised — the model reads emails without any labels',
+    ],
+    answer: 2,
+    explanation: 'Supervised learning uses labelled examples (emails tagged as complaint / not complaint) to teach the model the distinction. It\'s the standard approach for classification tasks.',
+  },
+
+  // ── LEVEL 3 — Advanced ──
+  {
+    level: 3,
+    q: 'What does fine-tuning an AI model achieve that prompting alone cannot?',
+    opts: [
+      'It makes the model respond faster to user requests',
+      'It permanently updates the model\'s weights for a specific domain',
+      'It increases the model\'s maximum context window size',
+      'It allows the model to access real-time internet data',
+    ],
+    answer: 1,
+    explanation: 'Fine-tuning changes the model\'s actual parameters by training on new data, embedding domain knowledge persistently. Prompting only guides the existing model at inference time.',
+  },
+  {
+    level: 3,
+    q: 'What was the key innovation of the Transformer architecture introduced in 2017?',
+    opts: [
+      'Processing all input tokens in parallel using a self-attention mechanism',
+      'Storing every training example directly in the model\'s memory',
+      'Using recurrent loops to process sequences one token at a time',
+      'Distributing computation across thousands of GPU cores automatically',
+    ],
+    answer: 0,
+    explanation: 'The Transformer replaced sequential RNNs with parallel self-attention — letting the model weigh the relevance of every token to every other token simultaneously. This unlocked scale.',
+  },
+  {
+    level: 3,
+    q: 'Why are vector embeddings central to how modern AI search works?',
+    opts: [
+      'They compress documents into smaller files for faster storage',
+      'They encrypt text data before sending it to the AI model',
+      'They convert text into numbers where similar meaning = similar position',
+      'They translate search queries into the language the model was trained in',
+    ],
+    answer: 2,
+    explanation: 'Embeddings map text to a numerical space where semantically related content clusters together. Searching by vector similarity lets AI find meaning, not just keyword matches.',
+  },
+  {
+    level: 3,
+    q: 'What capability makes an AI "agent" fundamentally different from a chatbot?',
+    opts: [
+      'It has access to a larger and more recent training dataset',
+      'It uses a more powerful underlying language model',
+      'It can take actions — running tools, code, or APIs to complete tasks',
+      'It can hold longer conversations without forgetting earlier context',
+    ],
+    answer: 2,
+    explanation: 'An AI agent can act: browse the web, write and run code, call APIs, or trigger workflows. A chatbot only generates text responses. Agency = the ability to do, not just say.',
+  },
+  {
+    level: 3,
+    q: 'A model has a 200,000-token context window. What real-world benefit does this provide?',
+    opts: [
+      'It can process an entire book or codebase in a single conversation',
+      'It produces more accurate answers because it saw more training data',
+      'It runs significantly faster than models with smaller context windows',
+      'It can serve more users simultaneously without performance loss',
+    ],
+    answer: 0,
+    explanation: 'Context window = how much text the model can "see" at once. 200K tokens is roughly 150,000 words — enough for a novel or large codebase. This enables whole-document analysis in one call.',
+  },
+];
+
+// Fisher-Yates shuffle answers for each question
+function shuffleQuestion(q) {
+  const pairs = q.opts.map((opt, i) => ({ opt, correct: i === q.answer }));
+  for (let i = pairs.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pairs[i], pairs[j]] = [pairs[j], pairs[i]];
+  }
+  return { ...q, opts: pairs.map(p => p.opt), answer: pairs.findIndex(p => p.correct) };
+}
+
+function prepareQuiz() {
+  SHUFFLED_QUIZ = RAW_QUIZ.map(shuffleQuestion);
+}
+
+/* =====================================================
+   CLASSIFIER + RECOMMENDER
+===================================================== */
+function classify(score) {
+  if (score >= 11) return 'Advanced';
+  if (score >= 6)  return 'Informed';
+  return 'Beginner';
+}
+
+function recommendCourses(courses) {
+  const { classification, budget, objectives, role } = state;
+  const isTech = ['Engineer / Developer','Data Analyst','Student'].includes(role) ||
+    objectives.some(o => ['build','research','career'].includes(o));
+  const budgetFree = budget === 'free';
+
+  return courses
+    .filter(c => !(budgetFree && !c.is_free))
+    .map(c => {
+      let s = 0;
+      const lvl = (c.level||'').toLowerCase();
+      if (classification==='Beginner')  { if(lvl==='beginner') s+=10; if(lvl==='intermediate') s+=2; }
+      if (classification==='Informed')  { if(lvl==='intermediate') s+=10; if(lvl==='beginner') s+=4; if(lvl==='advanced') s+=6; }
+      if (classification==='Advanced')  { if(lvl==='advanced') s+=10; if(lvl==='intermediate') s+=7; }
+      if (isTech && ['Stanford Online','MIT OpenCourseWare','NVIDIA DLI','fast.ai'].includes(c.provider)) s+=3;
+      if (!isTech && ['Google','DeepLearning.AI','Microsoft'].includes(c.provider)) s+=3;
+      if (c.is_free) s+=1;
+      return { ...c, _score: s };
+    })
+    .sort((a,b) => b._score - a._score)
+    .slice(0, 6);
+}
+
+/* =====================================================
+   RENDER ENGINE
+===================================================== */
+const $id = id => document.getElementById(id);
+
+function setStep(n) {
+  state.step = n;
+  updateProgress();
+  const names = ['welcome','profile','goals','schedule','quiz','results','plan'];
+  renderStep(names[n]);
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function updateProgress() {
+  const wrap = $id('progress-wrap');
+  const fill = $id('progress-fill');
+  if (state.step === 0) { wrap.style.display='none'; return; }
+  wrap.style.display = 'block';
+  fill.style.width = `${(state.step / 6) * 100}%`;
+  document.querySelectorAll('.progress-label').forEach(el => {
+    const s = parseInt(el.dataset.step);
+    el.classList.toggle('active', s === state.step);
+    el.classList.toggle('done',   s < state.step);
+  });
+}
+
+function renderStep(name) {
+  const c = $id('step-container');
+  if (name==='quiz')    { renderQuiz(); return; }
+  if (name==='results') { renderResults(); return; }
+  if (name==='plan')    { renderPlan(); return; }
+  const map = { welcome: stepWelcome, profile: stepProfile, goals: stepGoals, schedule: stepSchedule };
+  c.innerHTML = map[name]();
+  bindStepEvents(name);
+}
+
+/* ---- Step 0: Welcome ---- */
+function stepWelcome() {
+  const prev = state.prevSession;
+  const returnBanner = prev ? `
+    <div class="returning-banner">
+      <div class="returning-banner-icon">👋</div>
+      <div class="returning-banner-text">
+        <strong>Welcome back! Your last result: ${prev.classification}</strong>
+        <span>Previous score: ${prev.quiz_score}/15
+          ${prev.quiz_score !== undefined ? `— retake to see if you've improved!` : ''}
+        </span>
+      </div>
+    </div>` : '';
+  return `
+  <div class="step-card">
+    ${returnBanner}
+    <div class="step-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    </div>
+    <h1 class="step-title">Find Your Perfect AI Learning Path</h1>
+    <p class="step-subtitle">TrainIQ analyses your role, goals, and AI knowledge to match you with the right courses — free or paid, at your pace.</p>
+    <div class="welcome-features">
+      <div class="welcome-feat">
+        <div class="welcome-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <div class="welcome-feat-text"><strong>5-minute adaptive quiz</strong><span>15 questions — answer order is randomised every time</span></div>
+      </div>
+      <div class="welcome-feat">
+        <div class="welcome-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+        <div class="welcome-feat-text"><strong>Personalised course recommendations</strong><span>Filtered for your role, budget, and learning goals</span></div>
+      </div>
+      <div class="welcome-feat">
+        <div class="welcome-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <div class="welcome-feat-text"><strong>Study reminders at your exact time</strong><span>Set a day + time and get an email reminder when it's study o'clock</span></div>
+      </div>
+      <div class="welcome-feat">
+        <div class="welcome-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+        <div class="welcome-feat-text"><strong>Free &amp; paid options</strong><span>Courses from Google, Stanford, NVIDIA, Coursera &amp; more</span></div>
+      </div>
+    </div>
+    <div class="step-nav" style="justify-content:flex-end">
+      <button class="btn-next" id="btn-start">
+        Get Started <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div>`;
+}
+
+/* ---- Step 1: Profile ---- */
+function stepProfile() {
+  const opts = ROLES.map(r => `<option value="${r}" ${state.role===r?'selected':''}>${r}</option>`).join('');
+  return `
+  <div class="step-card">
+    <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+    <h2 class="step-title">What's your role?</h2>
+    <p class="step-subtitle">We tailor quiz topics and course recommendations to your profession.</p>
+    <div class="field">
+      <label for="role-select">Your current role / title</label>
+      <select class="select" id="role-select">
+        <option value="">Select your role…</option>${opts}
+      </select>
+    </div>
+    <div class="step-nav">
+      <button class="btn-back" id="btn-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg> Back</button>
+      <button class="btn-next" id="btn-next" ${!state.role?'disabled':''}>Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></button>
+    </div>
+  </div>`;
+}
+
+/* ---- Step 2: Goals ---- */
+function stepGoals() {
+  const objChips = OBJECTIVES.map(o => `
+    <div class="chip ${state.objectives.includes(o.id)?'selected':''}" data-obj="${o.id}">
+      <svg class="chip-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>${o.label}
+    </div>`).join('');
+  const budgetCards = BUDGETS.map(b => `
+    <div class="option-card ${state.budget===b.id?'selected':''}" data-budget="${b.id}">
+      <div class="option-title">${b.title}</div><div class="option-desc">${b.desc}</div>
+    </div>`).join('');
+  const timelineCards = TIMELINES.map(t => `
+    <div class="option-card ${state.timeline===t.id?'selected':''}" data-timeline="${t.id}">
+      <div class="option-title">${t.title}</div><div class="option-desc">${t.desc}</div>
+    </div>`).join('');
+  const canNext = state.objectives.length > 0 && state.budget && state.timeline;
+  return `
+  <div class="step-card">
+    <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
+    <h2 class="step-title">Your goals &amp; budget</h2>
+    <p class="step-subtitle">Helps us filter the right courses for your situation.</p>
+    <div class="field">
+      <label>What do you want to achieve? <span style="color:var(--color-text-faint)">(pick all that apply)</span></label>
+      <div class="chip-grid" id="obj-chips">${objChips}</div>
+    </div>
+    <div class="field">
+      <label>Training budget</label>
+      <div class="option-grid">${budgetCards}</div>
+    </div>
+    <div class="field">
+      <label>Learning timeline</label>
+      <div class="option-grid">${timelineCards}</div>
+    </div>
+    <div class="step-nav">
+      <button class="btn-back" id="btn-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg> Back</button>
+      <button class="btn-next" id="btn-next" ${!canNext?'disabled':''}>Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></button>
+    </div>
+  </div>`;
+}
+
+/* ---- Step 3: Schedule ---- */
+function stepSchedule() {
+  const dayChips = DAYS.map(d => `
+    <button class="day-chip ${state.studyDays.includes(d)?'selected':''}" data-day="${d}">${d}</button>`).join('');
+  const reminderSummary = buildReminderSummary();
+  return `
+  <div class="step-card">
+    <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+    <h2 class="step-title">Your learning schedule</h2>
+    <p class="step-subtitle">We'll build a plan around your availability and send reminders at exactly the right time.</p>
+
+    <div class="field">
+      <label>Hours per week you can commit</label>
+      <div class="slider-wrap">
+        <input type="range" class="slider" id="hours-slider" min="1" max="30" step="1" value="${state.hoursPerWeek}">
+        <div class="slider-labels"><span>1 hr</span><span>30 hrs</span></div>
+        <span class="slider-value" id="hours-display">${state.hoursPerWeek} hrs / week</span>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>When do you study?</label>
+      <div class="time-picker-wrap">
+        <div class="time-picker-row">
+          <span class="time-picker-label">Study time</span>
+          <input type="time" class="time-input" id="study-time" value="${state.studyTime}">
+        </div>
+        <div class="time-picker-row" style="margin-bottom:0">
+          <span class="time-picker-label">Study days</span>
+          <div class="days-row">${dayChips}</div>
+        </div>
+        <div class="reminder-summary" id="reminder-summary">${reminderSummary}</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Your email</label>
+      <input type="email" class="input" id="email-input" placeholder="you@example.com" value="${state.email}">
+      <p style="font-size:var(--text-xs);color:var(--color-text-faint);margin-top:var(--space-1)">Used only for study reminders and progress tracking. Never shared.</p>
+    </div>
+
+    <div class="field">
+      <label class="reminder-opt" for="reminder-check">
+        <input type="checkbox" id="reminder-check" ${state.reminderEnabled?'checked':''}>
+        <div class="reminder-opt-text">
+          <strong>📬 Send me study reminders</strong>
+          <span id="reminder-check-label">${reminderSummary || 'Set a time and days above first'}</span>
+        </div>
+      </label>
+    </div>
+
+    <div class="field">
+      <label>Google Calendar <span style="color:var(--color-text-faint)">(optional)</span></label>
+      <div class="cal-toggle-wrap">
+        <div>
+          <strong style="display:block;font-size:var(--text-sm);font-weight:600;margin-bottom:2px">Auto-block study time</strong>
+          <span style="font-size:var(--text-xs);color:var(--color-text-muted)">Add courses directly to your Google Calendar</span>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="cal-toggle" ${state.hasCalendar?'checked':''}>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="cal-steps ${state.hasCalendar?'show':''}" id="cal-setup-steps">
+        <p style="font-size:var(--text-xs);font-weight:600;color:var(--color-text-muted);margin-bottom:var(--space-3)">One-time setup (2 minutes):</p>
+        <div class="cal-step-item">
+          <div class="cal-step-num">1</div>
+          <div class="cal-step-text">Go to <a href="https://console.cloud.google.com" target="_blank" rel="noopener">console.cloud.google.com</a> → Create a project → Enable the <strong>Google Calendar API</strong></div>
+        </div>
+        <div class="cal-step-item">
+          <div class="cal-step-num">2</div>
+          <div class="cal-step-text">Go to <strong>APIs &amp; Services → Credentials → Create OAuth 2.0 Client ID</strong> → Application type: <code>Web application</code> → Add <code>https://www.vidhai.co</code> as an Authorised JavaScript origin</div>
+        </div>
+        <div class="cal-step-item">
+          <div class="cal-step-num">3</div>
+          <div class="cal-step-text">Copy your <strong>Client ID</strong> and paste it below, then click Connect</div>
+        </div>
+        <div class="cal-client-id-row">
+          <input type="text" class="input" id="cal-client-id" placeholder="Paste your Google Client ID here…" value="${state.calClientId}">
+          <button class="btn-cal-connect" id="btn-cal-connect">Connect Calendar</button>
+        </div>
+        <div id="cal-status" class="cal-status ${state.calToken?'connected':''}">
+          ${state.calToken ? '✓ Connected to Google Calendar — courses will be added after you pick them' : ''}
+        </div>
+      </div>
+    </div>
+
+    <div class="step-nav">
+      <button class="btn-back" id="btn-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg> Back</button>
+      <button class="btn-next" id="btn-next">Start Quiz <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></button>
+    </div>
+  </div>`;
+}
+
+function buildReminderSummary() {
+  if (!state.studyTime || state.studyDays.length === 0) return '';
+  const [h, m] = state.studyTime.split(':');
+  const hr = parseInt(h), mi = parseInt(m);
+  const ampm = hr >= 12 ? 'PM' : 'AM';
+  const hr12 = hr % 12 || 12;
+  const timeStr = `${hr12}:${m.padStart(2,'0')} ${ampm}`;
+  const daysStr = state.studyDays.join(', ');
+  return `Reminder: every ${daysStr} at ${timeStr}`;
+}
+
+/* ---- Step 4: Quiz ---- */
+let quizIdx = 0;
+function renderQuiz() {
+  quizIdx = state.quizAnswers.length;
+  if (quizIdx >= SHUFFLED_QUIZ.length) { computeResults(); return; }
+  const q   = SHUFFLED_QUIZ[quizIdx];
+  const pct = (quizIdx / SHUFFLED_QUIZ.length) * 100;
+  const levelLabels = {1:'Foundational',2:'Intermediate',3:'Advanced'};
+  const letters = ['A','B','C','D'];
+  $id('step-container').innerHTML = `
+  <div class="step-card">
+    <div class="quiz-header">
+      <span class="quiz-counter">Question ${quizIdx+1} of ${SHUFFLED_QUIZ.length}</span>
+      <span class="quiz-level level-${q.level}">${levelLabels[q.level]}</span>
+    </div>
+    <div class="quiz-q-track"><div class="quiz-q-fill" style="width:${pct}%"></div></div>
+    <p class="quiz-question">${q.q}</p>
+    <div class="quiz-options">
+      ${q.opts.map((opt,i) => `
+        <button class="quiz-option" data-idx="${i}">
+          <span class="quiz-opt-letter">${letters[i]}</span>${opt}
+        </button>`).join('')}
+    </div>
+    <div class="quiz-feedback" id="quiz-feedback"></div>
+    <button class="quiz-next-btn" id="quiz-next">${quizIdx===SHUFFLED_QUIZ.length-1?'See My Results →':'Next Question →'}</button>
+  </div>`;
+  document.querySelectorAll('.quiz-option').forEach(btn => {
+    btn.addEventListener('click', () => handleAnswer(parseInt(btn.dataset.idx)));
+  });
+}
+
+function handleAnswer(chosen) {
+  const q = SHUFFLED_QUIZ[quizIdx];
+  const correct = chosen === q.answer;
+  state.quizAnswers.push({ q:quizIdx, chosen, correct });
+  document.querySelectorAll('.quiz-option').forEach((btn,i) => {
+    btn.disabled = true;
+    if (i===q.answer) btn.classList.add('correct');
+    if (i===chosen && !correct) btn.classList.add('wrong');
+    if (i===chosen) btn.classList.add('selected');
+    if (i===q.answer || i===chosen) {
+      btn.querySelector('.quiz-opt-letter').style.background =
+        i===q.answer ? '#22c55e' : 'var(--color-accent-rose)';
+      btn.querySelector('.quiz-opt-letter').style.color = '#fff';
+    }
+  });
+  const fb = $id('quiz-feedback');
+  fb.textContent = (correct?'✓ Correct! ':'✗ Not quite. ') + q.explanation;
+  fb.className = `quiz-feedback show ${correct?'correct':'wrong'}`;
+  const nb = $id('quiz-next');
+  nb.classList.add('show');
+  nb.onclick = () => { quizIdx++; renderQuiz(); };
+}
+
+function computeResults() {
+  state.quizScore      = state.quizAnswers.filter(a => a.correct).length;
+  state.classification = classify(state.quizScore);
+  state.recommended    = recommendCourses(state.courses);
+  saveToSupabase();
+  setStep(5);
+}
+
+/* ---- Step 5: Results ---- */
+function renderResults() {
+  const {classification, quizScore, recommended, prevSession} = state;
+  const pct = Math.round((quizScore/15)*100);
+  const classInfo = {
+    Beginner:  {emoji:'🌱',desc:"You're just starting with AI — great timing! We've selected beginner-friendly, high-quality courses to build your foundation.", cls:'beginner'},
+    Informed:  {emoji:'📚',desc:'You have a solid grasp of AI concepts. These courses will sharpen your skills and prepare you for real-world implementation.', cls:'informed'},
+    Advanced:  {emoji:'🚀',desc:"You're highly knowledgeable about AI. We've picked advanced specialisations and courses to push your expertise further.", cls:'advanced'},
+  };
+  const info = classInfo[classification];
+
+  // Progress delta vs previous session
+  let deltaHtml = '';
+  if (prevSession && prevSession.quiz_score !== undefined) {
+    const diff = quizScore - prevSession.quiz_score;
+    if (diff > 0)      deltaHtml = `<div class="score-delta up">↑ +${diff} since your last attempt — great progress!</div>`;
+    else if (diff < 0) deltaHtml = `<div class="score-delta down">↓ ${diff} vs last attempt — keep practising!</div>`;
+    else               deltaHtml = `<div class="score-delta same">Same score as last time — you're consistent!</div>`;
+  }
+
+  const freeCourses = recommended.filter(c => c.is_free);
+  const paidCourses = recommended.filter(c => !c.is_free);
+
+  function courseCard(c) {
+    const sel = state.selected.includes(c.id);
+    return `
+    <div class="course-card ${sel?'selected':''}" data-cid="${c.id}">
+      <div class="course-card-header">
+        <div class="course-card-title">${c.title}</div>
+        <div class="course-card-check">${sel?'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>':''}</div>
+      </div>
+      <div class="course-card-provider">${c.provider}</div>
+      <div class="course-card-desc">${c.description}</div>
+      <div class="course-card-meta">
+        <span class="tag ${c.is_free?'tag-free':'tag-paid'}">${c.is_free?'Free':c.price}</span>
+        <span class="tag tag-level">${c.level}</span>
+        <span class="tag tag-duration">${c.duration}</span>
+      </div>
+      <div class="course-card-enroll">
+        <a href="${affiliateUrl(c)}" target="_blank" rel="noopener" class="btn-enroll" onclick="event.stopPropagation()">Enrol Now →</a>
+      </div>
+    </div>`;
+  }
+
+  $id('step-container').innerHTML = `
+  <div class="step-card">
+    <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+    <h2 class="step-title">Your AI Readiness: ${info.emoji} ${classification}</h2>
+    <div class="score-bar">
+      <div class="score-row">
+        <span class="score-label">Quiz Score</span>
+        <span class="score-num">${quizScore} / 15 &nbsp;(${pct}%)</span>
+      </div>
+      <div class="score-track"><div class="score-fill" id="score-fill" style="width:0%"></div></div>
+      ${deltaHtml}
+    </div>
+    <span class="classification-badge ${info.cls}">${info.emoji} ${classification}</span>
+    <p class="step-subtitle">${info.desc}</p>
+    ${freeCourses.length?`<p class="courses-section-title">Free Courses</p><div class="course-cards" id="free-cards">${freeCourses.map(courseCard).join('')}</div>`:''}
+    ${paidCourses.length?`<p class="courses-section-title">Paid Courses</p><div class="course-cards" id="paid-cards">${paidCourses.map(courseCard).join('')}</div>`:''}
+    <p class="affiliate-notice">Some links use affiliate codes at no extra cost to you — this helps support free Vidhai content ✌️</p>
+    <div class="step-nav">
+      <button class="btn-back" id="btn-retake"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg> Retake Quiz</button>
+      <button class="btn-next" id="btn-plan" ${state.selected.length===0?'disabled':''}>Build My Plan <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></button>
+    </div>
+  </div>`;
+
+  requestAnimationFrame(() => setTimeout(() => { $id('score-fill').style.width = pct+'%'; }, 100));
+
+  document.querySelectorAll('.course-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const id = parseInt(card.dataset.cid);
+      state.selected = state.selected.includes(id) ? state.selected.filter(s=>s!==id) : [...state.selected, id];
+      renderResults();
+    });
+  });
+
+  $id('btn-plan').onclick   = () => setStep(6);
+  $id('btn-retake').onclick = () => {
+    state.quizAnswers=[]; state.quizScore=0; state.classification='';
+    state.recommended=[]; state.selected=[]; quizIdx=0;
+    prepareQuiz();
+    setStep(4);
+  };
+}
+
+/* ---- Step 6: Learning Plan ---- */
+function renderPlan() {
+  const selectedCourses = state.courses.filter(c => state.selected.includes(c.id));
+  const today = new Date().toISOString().split('T')[0];
+
+  function calRow(c) {
+    return `
+    <div class="cal-course-row">
+      <span class="cal-course-name" title="${c.title}">${c.title}</span>
+      ${state.hasCalendar && state.calToken
+        ? `<input type="date" class="cal-date-input" id="cal-date-${c.id}" min="${today}" value="${today}">
+           <button class="cal-add-btn" id="cal-btn-${c.id}" data-cid="${c.id}">+ Calendar</button>`
+        : `<a href="${affiliateUrl(c)}" target="_blank" rel="noopener" class="btn-enroll">Enrol →</a>`
+      }
+    </div>`;
+  }
+
+  const reminderInfo = state.reminderEnabled && state.email
+    ? `<p style="font-size:var(--text-xs);color:var(--color-primary);text-align:center;margin-top:var(--space-3)">
+         📬 Study reminders will be sent to <strong>${state.email}</strong> — ${buildReminderSummary()}
+       </p>` : '';
+
+  $id('step-container').innerHTML = `
+  <div class="step-card">
+    <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+    <h2 class="step-title">Your Learning Plan</h2>
+    <p class="step-subtitle">You've selected ${selectedCourses.length} course${selectedCourses.length!==1?'s':''}. ${state.hasCalendar && state.calToken ? 'Set a start date and add each to your Google Calendar.' : 'Click Enrol to get started.'}</p>
+    <div class="cal-plan">
+      <div class="cal-plan-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Selected Courses
+      </div>
+      ${selectedCourses.map(calRow).join('')}
+    </div>
+    <div class="complete-banner">
+      <h2>🎉 Your TrainIQ Plan is Ready!</h2>
+      <p>You're <strong>${state.classification}</strong> — scored ${state.quizScore}/15.
+        ${state.reminderEnabled && state.email ? `<br>Reminders set for ${buildReminderSummary()}.` : ''}
+      </p>
+      ${reminderInfo}
+      <div class="share-row">
+        <button class="btn-share secondary" id="btn-restart">Start Over</button>
+        <a href="/" class="btn-share primary">← Back to Vidhai</a>
+      </div>
+    </div>
+    <div class="step-nav">
+      <button class="btn-back" id="btn-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg> Back</button>
+    </div>
+  </div>`;
+
+  if (state.hasCalendar && state.calToken) {
+    document.querySelectorAll('.cal-add-btn').forEach(btn =>
+      btn.addEventListener('click', () => addToCalendar(parseInt(btn.dataset.cid)))
+    );
+  }
+  $id('btn-back').onclick    = () => setStep(5);
+  $id('btn-restart').onclick = () => restartWizard();
+}
+
+/* =====================================================
+   EVENT BINDING
+===================================================== */
+function bindStepEvents(name) {
+  if (name==='welcome') {
+    $id('btn-start').onclick = () => setStep(1);
+    return;
+  }
+  if (name==='profile') {
+    const sel = $id('role-select');
+    sel.onchange = () => { state.role = sel.value; $id('btn-next').disabled = !state.role; };
+    $id('btn-back').onclick = () => setStep(0);
+    $id('btn-next').onclick = () => { if(state.role) setStep(2); };
+    return;
+  }
+  if (name==='goals') {
+    document.querySelectorAll('[data-obj]').forEach(c => {
+      c.onclick = () => {
+        const id = c.dataset.obj;
+        state.objectives = state.objectives.includes(id) ? state.objectives.filter(o=>o!==id) : [...state.objectives, id];
+        renderStep('goals');
+      };
+    });
+    document.querySelectorAll('[data-budget]').forEach(c => { c.onclick = () => { state.budget=c.dataset.budget; renderStep('goals'); }; });
+    document.querySelectorAll('[data-timeline]').forEach(c => { c.onclick = () => { state.timeline=c.dataset.timeline; renderStep('goals'); }; });
+    $id('btn-back').onclick = () => setStep(1);
+    $id('btn-next').onclick = () => { if(state.objectives.length && state.budget && state.timeline) setStep(3); };
+    return;
+  }
+  if (name==='schedule') {
+    // Hours slider
+    const slider = $id('hours-slider');
+    slider.oninput = () => { state.hoursPerWeek = parseInt(slider.value); $id('hours-display').textContent = slider.value+' hrs / week'; };
+    // Time picker
+    $id('study-time').onchange = e => {
+      state.studyTime = e.target.value;
+      const s = buildReminderSummary();
+      $id('reminder-summary').textContent = s;
+      $id('reminder-check-label').textContent = s || 'Set a time and days above first';
+    };
+    // Day chips
+    document.querySelectorAll('.day-chip').forEach(chip => {
+      chip.onclick = () => {
+        const d = chip.dataset.day;
+        state.studyDays = state.studyDays.includes(d) ? state.studyDays.filter(x=>x!==d) : [...state.studyDays, d];
+        renderStep('schedule');
+      };
+    });
+    // Email
+    $id('email-input').oninput = e => { state.email = e.target.value.trim(); };
+    // Reminder checkbox
+    $id('reminder-check').onchange = e => { state.reminderEnabled = e.target.checked; };
+    // Calendar toggle
+    $id('cal-toggle').onchange = e => {
+      const steps = $id('cal-setup-steps');
+      if (e.target.checked) { steps.classList.add('show'); }
+      else { steps.classList.remove('show'); state.hasCalendar=false; state.calToken=null; }
+    };
+    // Calendar connect button
+    $id('btn-cal-connect').onclick = () => {
+      const clientId = $id('cal-client-id').value.trim();
+      if (!clientId) { showCalStatus('error','Please paste your Google Client ID first.'); return; }
+      state.calClientId = clientId;
+      requestCalendarAccess(clientId);
+    };
+    $id('btn-back').onclick = () => setStep(2);
+    $id('btn-next').onclick = () => setStep(4);
+    return;
+  }
+}
+
+/* =====================================================
+   GOOGLE CALENDAR
+===================================================== */
+async function requestCalendarAccess(clientId) {
+  try {
+    const client = google.accounts.oauth2.initTokenClient({
+      client_id: clientId,
+      scope: 'https://www.googleapis.com/auth/calendar.events',
+      callback: (res) => {
+        if (res.error) { showCalStatus('error','Could not connect. Check your Client ID and try again.'); return; }
+        state.calToken   = res.access_token;
+        state.hasCalendar = true;
+        showCalStatus('connected','✓ Connected to Google Calendar — courses will be added to your primary calendar');
+      },
+    });
+    client.requestAccessToken();
+  } catch(e) {
+    showCalStatus('error','Google Identity not loaded yet. Try again in a moment.');
+  }
+}
+
+function showCalStatus(type, msg) {
+  const el = $id('cal-status');
+  if (!el) return;
+  el.className = `cal-status ${type}`;
+  el.textContent = msg;
+}
+
+async function addToCalendar(courseId) {
+  const c   = state.courses.find(x => x.id === courseId);
+  const dateEl = $id(`cal-date-${courseId}`);
+  const startDate = dateEl ? dateEl.value : new Date().toISOString().split('T')[0];
+  const btn = $id(`cal-btn-${courseId}`);
+  if (!c || !state.calToken) return;
+  btn.disabled = true; btn.textContent = 'Adding…';
+  const hours    = parseDurationHours(c.duration || '10 hours');
+  const weeks    = Math.max(1, Math.ceil(hours / state.hoursPerWeek));
+  const endDate  = addWeeks(startDate, weeks);
+  const [h, m]   = state.studyTime.split(':');
+  const event = {
+    summary: `📚 ${c.title}`,
+    description: `TrainIQ Study Plan\n\nProvider: ${c.provider}\nLevel: ${c.level}\nDuration: ${c.duration}\n\nEnrol: ${c.enroll_url}\n\nScheduled via TrainIQ on vidhai.co`,
+    start: { date: startDate },
+    end:   { date: endDate },
+    recurrence: state.studyDays.length > 0
+      ? [`RRULE:FREQ=WEEKLY;BYDAY=${state.studyDays.map(d=>d.toUpperCase().slice(0,2)).join(',')}`]
+      : undefined,
+    reminders: {
+      useDefault: false,
+      overrides: [{ method:'popup', minutes: 30 }, { method:'email', minutes:1440 }],
+    },
+    colorId: '2',
+  };
+  try {
+    const res = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
+      method:'POST',
+      headers:{ Authorization:`Bearer ${state.calToken}`, 'Content-Type':'application/json' },
+      body: JSON.stringify(event),
+    });
+    if (res.ok) {
+      btn.textContent = '✓ Added!'; btn.classList.add('added'); btn.disabled = true;
+      updateCalendarDone();
+    } else {
+      btn.textContent = 'Retry'; btn.disabled = false;
+    }
+  } catch(e) { btn.textContent = 'Failed — retry'; btn.disabled = false; }
+}
+
+function parseDurationHours(s) {
+  const n = parseFloat(s.replace(/[^0-9.]/g,''));
+  if (!n || isNaN(n)) return 10;
+  if (s.toLowerCase().includes('month')) return n * 40;
+  return n;
+}
+function addWeeks(dateStr, weeks) {
+  const d = new Date(dateStr); d.setDate(d.getDate() + weeks*7);
+  return d.toISOString().split('T')[0];
+}
+
+/* =====================================================
+   SUPABASE
+===================================================== */
+async function saveToSupabase() {
+  try {
+    const { data } = await sb.from('trainiq_assessments').insert({
+      session_id:      state.sessionId,
+      role:            state.role,
+      objectives:      state.objectives,
+      budget:          state.budget,
+      timeline:        state.timeline,
+      hours_per_week:  String(state.hoursPerWeek),
+      preferred_time:  state.studyTime,
+      has_calendar:    state.hasCalendar,
+      email:           state.email || null,
+      reminder_enabled: state.reminderEnabled,
+      quiz_score:      state.quizScore,
+      quiz_answers:    state.quizAnswers,
+      classification:  state.classification,
+      recommended_ids: state.recommended.map(c=>c.id),
+      selected_ids:    state.selected,
+      progress_history: state.prevSession
+        ? [{ date: state.prevSession.created_at, score: state.prevSession.quiz_score, classification: state.prevSession.classification }]
+        : [],
+    }).select().single();
+    if (data) state.dbId = data.id;
+  } catch(e) { /* silent */ }
+}
+
+async function updateCalendarDone() {
+  if (!state.dbId) return;
+  try { await sb.from('trainiq_assessments').update({ selected_ids:state.selected, calendar_done:true }).eq('id', state.dbId); } catch(_) {}
+}
+
+// Check for returning user by email
+async function checkReturningUser(email) {
+  if (!email) return null;
+  try {
+    const { data } = await sb.from('trainiq_assessments')
+      .select('id,classification,quiz_score,created_at')
+      .eq('email', email)
+      .order('created_at', { ascending:false })
+      .limit(1)
+      .single();
+    return data || null;
+  } catch(_) { return null; }
+}
+
+/* =====================================================
+   THEME
+===================================================== */
+document.addEventListener('click', e => {
+  if (e.target.closest('[data-theme-toggle]')) {
+    const html = document.documentElement;
+    html.setAttribute('data-theme', html.getAttribute('data-theme')==='dark'?'light':'dark');
+  }
+});
+
+/* =====================================================
+   RESTART
+===================================================== */
+function restartWizard() {
+  Object.assign(state, {
+    step:0, role:'', objectives:[], budget:'', timeline:'',
+    hoursPerWeek:5, studyTime:'07:00', studyDays:['Mon','Wed','Fri'],
+    email:'', reminderEnabled:false,
+    hasCalendar:false, calClientId:'', calToken:null,
+    quizAnswers:[], quizScore:0, classification:'',
+    recommended:[], selected:[],
+    sessionId: crypto.randomUUID(), dbId:null, prevSession:null,
+  });
+  quizIdx = 0;
+  prepareQuiz();
+  setStep(0);
+}
+
+/* =====================================================
+   BOOT
+===================================================== */
+async function boot() {
+  // Load courses from Supabase
+  try {
+    const { data } = await sb.from('training_courses').select('*').eq('is_active',true).order('sort_order');
+    if (data) state.courses = data;
+  } catch(e) {}
+
+  // Check if email in localStorage from a previous visit
+  const savedEmail = localStorage.getItem('trainiq_email');
+  if (savedEmail) {
+    state.email = savedEmail;
+    state.prevSession = await checkReturningUser(savedEmail);
+  }
+
+  prepareQuiz();
+  setStep(0);
+}
+
+// Save email to localStorage when user progresses past schedule step
+const _origSetStep = setStep;
+window.setStep = function(n) {
+  if (n === 4 && state.email) {
+    localStorage.setItem('trainiq_email', state.email);
+    // Lookup previous sessions for progress tracking
+    if (!state.prevSession) {
+      checkReturningUser(state.email).then(prev => { state.prevSession = prev; });
+    }
+  }
+  _origSetStep(n);
+};
+// Patch back
+function setStep(n) {
+  if (n === 4 && state.email) {
+    localStorage.setItem('trainiq_email', state.email);
+    if (!state.prevSession) {
+      checkReturningUser(state.email).then(prev => { state.prevSession = prev; });
+    }
+  }
+  state.step = n;
+  updateProgress();
+  const names = ['welcome','profile','goals','schedule','quiz','results','plan'];
+  renderStep(names[n]);
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+boot();
+</script>
+</body>
+</html>
