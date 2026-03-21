@@ -340,8 +340,16 @@ const SB_URL  = 'https://wyuzksjbbgwvzxzmhpge.supabase.co';
 const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5dXprc2piYmd3dnp4em1ocGdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3NDkyNDcsImV4cCI6MjA4ODMyNTI0N30.Ia1CfW_4TRmXuz2LM53oj0oHJK5TBcHOuDUUcwoCAd8';
 const sb = supabase.createClient(SB_URL, SB_ANON);
 
-// Replace with your real affiliate IDs from impact.com (Coursera) and Rakuten (Udemy)
-const AFFILIATE = { coursera_id: 'YOUR_COURSERA_ID', udemy_id: 'YOUR_UDEMY_ID' };
+// ── AFFILIATE IDs ─────────────────────────────────────────────────────────────
+// Coursera: Sign up free at https://www.coursera.org/about/partners/affiliates
+//           (uses Impact.com) → once approved, paste your publisher/partner ID below
+// Udemy:    Sign up free at https://www.udemy.com/affiliate/
+//           (uses Rakuten Advertising) → once approved, paste your Site ID below
+// Until you add real IDs, visitors get direct links (no affiliate tracking).
+const AFFILIATE = {
+  coursera_id: 'YOUR_COURSERA_ID',  // ← replace after Impact.com approval
+  udemy_id:    'YOUR_UDEMY_ID',     // ← replace after Rakuten Advertising approval
+};
 
 function affiliateUrl(c) {
   const base = c.enroll_url || '#';
@@ -1032,6 +1040,29 @@ function renderResults() {
 /* ---- Step 6: Learning Plan ---- */
 function renderPlan() {
   const selectedCourses = state.courses.filter(c => state.selected.includes(c.id));
+
+  // ── Save personalised path to localStorage so the main Training section can show it ──
+  try {
+    const learningPath = {
+      date:           new Date().toISOString(),
+      classification: state.classification,
+      score:          state.quizScore,
+      role:           state.role,
+      budget:         state.budget,
+      email:          state.email || null,
+      courses: selectedCourses.map(c => ({
+        id:          c.id,
+        title:       c.title,
+        provider:    c.provider || '',
+        level:       c.level   || '',
+        enroll_url:  c.enroll_url || '#',
+        is_free:     !!c.is_free,
+        image_url:   c.image_url || '',
+        tags:        c.tags || [],
+      })),
+    };
+    localStorage.setItem('trainiq_learning_path', JSON.stringify(learningPath));
+  } catch(_) { /* storage not available */ }
   const today = new Date().toISOString().split('T')[0];
 
   function calRow(c) {
